@@ -8,7 +8,7 @@ import (
 )
 
 type Drives struct {
-	blockdevices string `json:"blockdevices"`
+	blockdevices []string `json:"blockdevices"`
 	//driveName  string `json:"name"`
 	//majMin     string `json:"maj:min"`
 	//rM         string `json:"rm"`
