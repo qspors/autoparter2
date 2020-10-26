@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os/exec"
 )
 
@@ -10,9 +11,9 @@ func main() {
 }
 
 func getDriveInfo() {
-	out, err := exec.Command("lsblk -J -a").Output()
+	out, err := exec.Command("ls").Output()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	fmt.Println(out)
 }
