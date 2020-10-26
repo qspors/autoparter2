@@ -15,5 +15,5 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(out)
+	fmt.Printf("Output is %s", out)
 }
