@@ -19,7 +19,5 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, item := range out {
-		fmt.Printf("Item: %s", &item)
-	}
+	fmt.Println(out)
 }
