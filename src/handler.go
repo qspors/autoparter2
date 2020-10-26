@@ -29,16 +29,10 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%s", out)
-	in := out
-	bytes, err := json.Marshal(in)
+
+	bytes, err := json.Marshal(out)
 	if err != nil {
 		fmt.Println(err)
 	}
-	var d Drives
-	err = json.Unmarshal(bytes, &d)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%+v", d)
+	fmt.Println(bytes)
 }
