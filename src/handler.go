@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -29,12 +28,6 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	var m string
-	err2 := json.Unmarshal(out, &m)
-	if err2 != nil {
-		fmt.Println(err2)
-	}
-	fmt.Printf("%s", m)
+	fmt.Printf("%s", out)
 
 }
