@@ -34,5 +34,5 @@ func getDriveInfo() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(bytes)
+	fmt.Printf("%s", bytes)
 }
