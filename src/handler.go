@@ -6,6 +6,10 @@ import (
 	"os/exec"
 )
 
+var excludedDrives struct {
+	loopD string
+}
+
 func main() {
 	getDriveInfo()
 }
@@ -15,5 +19,7 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Output is %s", out)
+	for _, item := range out {
+		fmt.Printf("Item: %s", item)
+	}
 }
