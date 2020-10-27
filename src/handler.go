@@ -14,6 +14,7 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 }
 
 func (r *Drives) ASD() ([]byte, error) {
+	fmt.Printf("ASD1")
 	return json.Marshal(r)
 }
 
@@ -27,14 +28,6 @@ type Blockdevice struct {
 	Type     string        `json:"type"`
 	Children []Blockdevice `json:"children,omitempty"`
 }
-
-//type Type string
-
-//const (
-//	Disk Type = "disk"
-//	Loop Type = "loop"
-//	Part Type = "part"
-//)
 
 func main() {
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
