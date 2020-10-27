@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os/exec"
@@ -51,8 +52,12 @@ func getInstanceId() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%+v\n", resp.Body)
 	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(string(body))
 
 	return ""
 }
