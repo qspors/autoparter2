@@ -46,5 +46,5 @@ func getDriveInfo() {
 
 	err = json.Unmarshal(bytes, &d)
 
-	fmt.Printf("%+v\n", d)
+	fmt.Printf("%+v\n", d.Blockdevices)
 }
