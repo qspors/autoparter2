@@ -34,7 +34,7 @@ func lsblkUtil() Drives {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%+v", r)
+	fmt.Printf("%+v\n", r)
 	return r
 }
 
