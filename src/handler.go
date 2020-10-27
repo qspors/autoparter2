@@ -14,19 +14,17 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 }
 
 type Drives struct {
-	Blockdevices []Blockdevice `json:"blockdevices"`
+	BlockDevices []BlockDevice `json:"blockdevices"`
 }
 
-type Blockdevice struct {
+type BlockDevice struct {
 	Name     string        `json:"name"`
 	Size     string        `json:"size"`
-	Type     string        `json:"type"`
-	Children []Blockdevice `json:"children,omitempty"`
+	Children []BlockDevice `json:"children,omitempty"`
 }
 
-func lsblkUtil() map[string]string {
+func getDrives() map[string]string {
 	driveMap := make(map[string]string)
-	fmt.Println(driveMap)
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
 		log.Fatal(err)
@@ -35,7 +33,7 @@ func lsblkUtil() map[string]string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for idx, itm := range r.Blockdevices {
+	for idx, itm := range r.BlockDevices {
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
 		default:
@@ -43,12 +41,11 @@ func lsblkUtil() map[string]string {
 				driveMap[itm.Name] = itm.Size
 			}
 		}
-
 	}
-	fmt.Printf("%+v", driveMap)
 	return driveMap
 }
 
 func main() {
-	lsblkUtil()
+	newMap := getDrives()
+	fmt.Printf("%+v", newMap)
 }
