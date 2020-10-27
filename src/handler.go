@@ -44,7 +44,7 @@ func lsblkUtil() {
 		case "loop2":
 			fmt.Println("This is: loop2")
 		default:
-			fmt.Printf("Default: %+v", itm.Name)
+			fmt.Printf("Default: %+v\n", itm.Name)
 
 		}
 
