@@ -25,7 +25,7 @@ type Blockdevice struct {
 	Name       string        `json:"name"`
 	MajMin     string        `json:"maj:min"`
 	Rm         string        `json:"rm"`
-	Size       *string       `json:"size"`
+	Size       string        `json:"size"`
 	Ro         string        `json:"ro"`
 	Type       Type          `json:"type"`
 	Mountpoint *string       `json:"mountpoint"`
