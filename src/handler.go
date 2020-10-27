@@ -65,7 +65,13 @@ func getInstanceId() string {
 }
 
 func getVolumeInfo(instanceId string) {
-	svc := ec2.New(session.New())
+	ses, err := session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1")},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	svc := ec2.New(ses)
 	input := &ec2.DescribeVolumesInput{
 		Filters: []*ec2.Filter{{
 			Name: aws.String("attachment.instance-id"),
