@@ -19,7 +19,7 @@ func getDriveInfo() {
 	str := string(out)
 	fmt.Println(str)
 	type Devices struct {
-		Blockdevices []map[string]map[string]string `json:"blockdevices"`
+		Blockdevices map[string]string `json:"blockdevices"`
 	}
 
 	bytes, err := json.Marshal(str)
