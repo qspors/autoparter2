@@ -14,6 +14,10 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 	return r, err
 }
 
+func (r *Drives) ASD() ([]byte, error) {
+	return json.Marshal(r)
+}
+
 type Drives struct {
 	Blockdevices []Blockdevice `json:"blockdevices"`
 }
@@ -37,4 +41,6 @@ func main() {
 	for _, item := range r.Blockdevices {
 		fmt.Printf("%+v\n", item)
 	}
+	stf, _ := r.ASD()
+	fmt.Println(stf)
 }
