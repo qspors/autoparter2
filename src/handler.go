@@ -16,7 +16,7 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	str := fmt.Sprint(out)
+	str := fmt.Sprint(&out)
 	fmt.Println(str)
 	fmt.Printf("%s", out)
 	fmt.Println(reflect.TypeOf(out))
