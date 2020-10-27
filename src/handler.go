@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-func UnmarshalWelcome(data []byte) (Drives, error) {
+func UnmarshalDrives(data []byte) (Drives, error) {
 	var r Drives
 	err := json.Unmarshal(data, &r)
 	return r, err
@@ -30,18 +30,18 @@ type Blockdevice struct {
 
 type Type string
 
-const (
-	Disk Type = "disk"
-	Loop Type = "loop"
-	Part Type = "part"
-)
+//const (
+//	Disk Type = "disk"
+//	Loop Type = "loop"
+//	Part Type = "part"
+//)
 
 func main() {
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
 		log.Fatal(err)
 	}
-	r, err := UnmarshalWelcome(out)
+	r, err := UnmarshalDrives(out)
 	if err != nil {
 		log.Fatal(err)
 	}
