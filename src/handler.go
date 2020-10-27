@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"reflect"
 )
 
 func UnmarshalDrives(data []byte) (Drives, error) {
@@ -33,7 +34,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, item := range r.Blockdevices {
-		fmt.Printf("%+v\n", item)
-	}
+
+	fmt.Println(reflect.TypeOf(r))
 }
