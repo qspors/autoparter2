@@ -13,7 +13,7 @@ func main() {
 
 func getDriveInfo() {
 	type Drives struct {
-		Blockdevices []map[string]string `json:"blockdevices"`
+		Blockdevices map[string]map[string]string `json:"blockdevices"`
 	}
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
