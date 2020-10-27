@@ -12,8 +12,8 @@ func main() {
 }
 
 func getDriveInfo() {
-	type Drives struct {
-		Blockdevices map[string][]map[string]string `json:"blockdevices"`
+	type Devices struct {
+		Blockdevices []map[string]string `json:"blockdevices"`
 	}
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
@@ -24,7 +24,7 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var d Drives
+	var d Devices
 	err = json.Unmarshal(bytes, &d)
 	if err != nil {
 		log.Fatal(err)
