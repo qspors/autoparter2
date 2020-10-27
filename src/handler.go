@@ -7,17 +7,17 @@ import (
 	"os/exec"
 )
 
-func UnmarshalWelcome(data []byte) (Welcome, error) {
-	var r Welcome
+func UnmarshalWelcome(data []byte) (Drives, error) {
+	var r Drives
 	err := json.Unmarshal(data, &r)
 	return r, err
 }
 
-func (r *Welcome) Marshal() ([]byte, error) {
+func (r *Drives) ASD() ([]byte, error) {
 	return json.Marshal(r)
 }
 
-type Welcome struct {
+type Drives struct {
 	Blockdevices []Blockdevice `json:"blockdevices"`
 }
 
