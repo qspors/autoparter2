@@ -52,7 +52,7 @@ func getInstanceId() string {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
-	fmt.Printf("%+v", resp)
+	fmt.Printf("%+v", resp.Body)
 	return ""
 }
 
