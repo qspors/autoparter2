@@ -38,12 +38,16 @@ func lsblkUtil() {
 	for _, itm := range r.Blockdevices {
 		switch itm.Name {
 		case "loop0":
-			fmt.Println("loop0")
+			fmt.Println("This is: loop0")
 		case "loop1":
-			fmt.Println("loop1")
+			fmt.Println("This is: loop1")
 		case "loop2":
-			fmt.Println("loop2")
+			fmt.Println("This is: loop2")
+		default:
+			fmt.Printf("Default: %+v", itm.Name)
+
 		}
+
 	}
 }
 
