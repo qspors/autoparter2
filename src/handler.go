@@ -36,7 +36,7 @@ func lsblkUtil() {
 		log.Fatal(err)
 	}
 	for idx, itm := range r.Blockdevices {
-
+		fmt.Println(len(itm.Children))
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
 		default:
