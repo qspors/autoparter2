@@ -22,6 +22,6 @@ func getDriveInfo() {
 		fmt.Println(err)
 	}
 
-	fmt.Println(bytes)
+	fmt.Println(string(bytes))
 
 }
