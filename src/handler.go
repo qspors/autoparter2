@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/ec2"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -61,11 +64,25 @@ func getInstanceId() string {
 	return string(body)
 }
 
-func getTags(instanceId string) {
-	fmt.Println(instanceId)
+func getVolumeInfo(instanceId string) {
+	svc := ec2.New(session.New())
+	input := &ec2.DescribeVolumesInput{
+		Filters: []*ec2.Filter{{
+			Name: aws.String("attachment.instance-id"),
+			Values: []*string{
+				aws.String(instanceId),
+			},
+		},
+		},
+	}
+	response, err := svc.DescribeVolumes(input)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(response)
+
 }
 
 func main() {
-	instanceId := getInstanceId()
-	getTags(instanceId)
+	getVolumeInfo(getInstanceId())
 }
