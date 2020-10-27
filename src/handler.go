@@ -16,10 +16,8 @@ func getDriveInfo() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	str := string(out)
-	fmt.Println(str)
 
-	bytes, err := json.Marshal(str)
+	bytes, err := json.Marshal(out)
 	if err != nil {
 		fmt.Println(err)
 	}
