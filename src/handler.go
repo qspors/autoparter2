@@ -39,7 +39,7 @@ func lsblkUtil() {
 		sidx := string(idx)
 		switch itm.Name {
 		case "loop" + sidx:
-			fmt.Printf("Loop is found: %s", itm.Name)
+			fmt.Printf("Loop is found: %+v", itm.Name)
 		}
 	}
 }
