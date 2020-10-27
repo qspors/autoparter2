@@ -25,8 +25,8 @@ type Blockdevice struct {
 }
 
 func lsblkUtil() {
-	driveMap := make(map[string]string)
-	fmt.Println(driveMap)
+	//driveMap := make(map[string]string)
+	//fmt.Println(driveMap)
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +36,14 @@ func lsblkUtil() {
 		log.Fatal(err)
 	}
 	for _, itm := range r.Blockdevices {
-		fmt.Println(itm.Name)
+		switch itm.Name {
+		case "loop0":
+			fmt.Println("loop0")
+		case "loop1":
+			fmt.Println("loop1")
+		case "loop2":
+			fmt.Println("loop2")
+		}
 	}
 }
 
