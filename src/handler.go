@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
-	"reflect"
 )
 
 func UnmarshalDrives(data []byte) (Drives, error) {
@@ -34,6 +33,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(reflect.TypeOf(r))
+	fmt.Println(r)
 }
