@@ -14,11 +14,6 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 	return r, err
 }
 
-func (r *Drives) ASD() ([]byte, error) {
-	fmt.Printf("ASD2")
-	return json.Marshal(r)
-}
-
 type Drives struct {
 	Blockdevices []Blockdevice `json:"blockdevices"`
 }
