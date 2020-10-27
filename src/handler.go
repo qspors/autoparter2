@@ -37,6 +37,7 @@ func lsblkUtil() {
 	}
 	for idx, itm := range r.Blockdevices {
 		sidx := string(idx)
+		fmt.Println(sidx)
 		switch itm.Name {
 		case "loop" + sidx:
 			fmt.Printf("This is: loop%d\n", idx)
