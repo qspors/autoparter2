@@ -10,11 +10,12 @@ import (
 func UnmarshalDrives(data []byte) (Drives, error) {
 	var r Drives
 	err := json.Unmarshal(data, &r)
+	fmt.Printf("ASD1")
 	return r, err
 }
 
 func (r *Drives) ASD() ([]byte, error) {
-	fmt.Printf("ASD1")
+	fmt.Printf("ASD2")
 	return json.Marshal(r)
 }
 
