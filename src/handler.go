@@ -57,7 +57,7 @@ func getInstanceId() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(body)
+	fmt.Println(string(body))
 
 	return ""
 }
