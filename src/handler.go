@@ -51,7 +51,7 @@ func getInstanceId() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%+v\n", resp)
+	fmt.Printf("%+v\n", resp.Body)
 	defer resp.Body.Close()
 
 	return ""
