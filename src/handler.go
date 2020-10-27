@@ -20,8 +20,8 @@ func getDriveInfo() {
 		log.Fatal(err)
 	}
 	fmt.Printf("%s", out)
-	for idx, vals := range out {
-		fmt.Println(idx, vals)
+	for _, vals := range out {
+		fmt.Sprint(vals)
 	}
 	bytes, err := json.Marshal(out)
 	if err != nil {
