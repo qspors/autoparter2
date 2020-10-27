@@ -7,19 +7,19 @@ import (
 	"os/exec"
 )
 
-type Drives struct {
-	Blockdevices []map[string]string `json:"blockdevices"`
-}
-
 func main() {
 	getDriveInfo()
 }
 
 func getDriveInfo() {
+	type Drives struct {
+		Blockdevices []map[string]string `json:"blockdevices"`
+	}
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Printf("%s", out)
 	bytes, err := json.Marshal(out)
 	if err != nil {
 		log.Fatal(err)
