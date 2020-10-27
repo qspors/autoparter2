@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"reflect"
 )
 
 func main() {
@@ -16,5 +17,6 @@ func getDriveInfo() {
 		log.Fatal(err)
 	}
 	fmt.Printf("%s", out)
+	fmt.Println(reflect.TypeOf(out))
 
 }
