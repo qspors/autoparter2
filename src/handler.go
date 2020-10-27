@@ -39,7 +39,6 @@ func lsblkUtil() {
 
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
-			fmt.Printf("This is: loop%d\n", idx)
 		default:
 			fmt.Printf("Default: %+v\n", itm.Name)
 
