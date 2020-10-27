@@ -49,5 +49,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%+v", r)
+	fmt.Printf("%+v", r.Blockdevices)
 }
