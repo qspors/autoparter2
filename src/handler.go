@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os/exec"
+	"strings"
 )
 
 func UnmarshalDrives(data []byte) (Drives, error) {
@@ -45,7 +47,18 @@ func getDrives() map[string]string {
 	return driveMap
 }
 
+func getInstanceId() string {
+	reader := strings.NewReader("")
+	request, err := http.NewRequest("GET", " http://169.254.169.254/latest/meta-data/instance-id", reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%+v", request)
+	return ""
+}
+
+func getTags() {}
+
 func main() {
-	newMap := getDrives()
-	fmt.Printf("%+v", newMap)
+	getInstanceId()
 }
