@@ -21,7 +21,7 @@ func getDriveInfo() {
 	}
 	fmt.Printf("%s", out)
 	for idx, vals := range out {
-		fmt.Printf("ix: %d, val: %+v\n",
+		fmt.Printf("ix: %d, val: %s\n",
 			idx, vals)
 	}
 	bytes, err := json.Marshal(out)
