@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
-	"strings"
 )
 
 func UnmarshalDrives(data []byte) (Drives, error) {
@@ -48,16 +47,11 @@ func getDrives() map[string]string {
 }
 
 func getInstanceId() string {
-	reader := strings.NewReader("")
-	request, err := http.NewRequest("GET", " http://169.254.169.254/latest/meta-data/instance-id", reader)
+	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
 	if err != nil {
 		log.Fatal(err)
 	}
-	client := &http.Client{}
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatal(err)
-	}
+	defer resp.Body.Close()
 	fmt.Printf("%+v", resp)
 	return ""
 }
