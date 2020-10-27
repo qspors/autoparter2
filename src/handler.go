@@ -48,7 +48,7 @@ func getDrives() map[string]string {
 }
 
 func getInstanceId() string {
-	reader := strings.NewReader("")
+	reader := strings.NewReader(`{"body":123}`)
 	request, err := http.NewRequest("GET", " http://169.254.169.254/latest/meta-data/instance-id", reader)
 	if err != nil {
 		log.Fatal(err)
