@@ -35,12 +35,8 @@ func lsblkUtil() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	for idx, itm := range r.Blockdevices {
-		sidx := string(idx)
-		switch itm.Name {
-		case "loop" + sidx:
-			fmt.Printf("Loop is found: %+v", itm.Name)
-		}
+	for _, itm := range r.Blockdevices {
+		fmt.Println(itm.Name)
 	}
 }
 
