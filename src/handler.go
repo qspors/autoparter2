@@ -24,11 +24,11 @@ type Drives struct {
 type Blockdevice struct {
 	Name     string        `json:"name"`
 	Size     string        `json:"size"`
-	Type     Type          `json:"type"`
+	Type     string        `json:"type"`
 	Children []Blockdevice `json:"children,omitempty"`
 }
 
-type Type string
+//type Type string
 
 //const (
 //	Disk Type = "disk"
