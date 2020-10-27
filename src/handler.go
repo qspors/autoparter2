@@ -24,9 +24,9 @@ type Blockdevice struct {
 	Children []Blockdevice `json:"children,omitempty"`
 }
 
-func lsblkUtil() {
-	//driveMap := make(map[string]string)
-	//fmt.Println(driveMap)
+func lsblkUtil() map[string]string {
+	driveMap := make(map[string]string)
+	fmt.Println(driveMap)
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
 		log.Fatal(err)
@@ -36,15 +36,17 @@ func lsblkUtil() {
 		log.Fatal(err)
 	}
 	for idx, itm := range r.Blockdevices {
-		fmt.Println(len(itm.Children))
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
 		default:
-			fmt.Printf("Default: %+v\n", itm.Name)
-
+			if len(itm.Children) == 0 {
+				driveMap[itm.Name] = itm.Size
+			}
 		}
 
 	}
+	fmt.Printf("%+v", driveMap)
+	return driveMap
 }
 
 func main() {
