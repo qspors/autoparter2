@@ -22,14 +22,10 @@ type Welcome struct {
 }
 
 type Blockdevice struct {
-	Name string `json:"name"`
-	//MajMin     string        `json:"maj:min"`
-	//Rm         string        `json:"rm"`
-	Size string `json:"size"`
-	//Ro         string        `json:"ro"`
-	Type       Type          `json:"type"`
-	Mountpoint *string       `json:"mountpoint"`
-	Children   []Blockdevice `json:"children,omitempty"`
+	Name     string        `json:"name"`
+	Size     string        `json:"size"`
+	Type     Type          `json:"type"`
+	Children []Blockdevice `json:"children,omitempty"`
 }
 
 type Type string
