@@ -12,7 +12,7 @@ func main() {
 }
 
 func getDriveInfo() {
-	out, err := exec.Command("lsblk", "-P").StdoutPipe()
+	out, err := exec.Command("lsblk", "-P").Output()
 	if err != nil {
 		log.Fatal(err)
 	}
