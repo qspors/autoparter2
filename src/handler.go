@@ -57,13 +57,15 @@ func getInstanceId() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(string(body))
 
-	return ""
+	return string(body)
 }
 
-func getTags() {}
+func getTags(instanceId string) {
+	fmt.Println(instanceId)
+}
 
 func main() {
-	getInstanceId()
+	instanceId := getInstanceId()
+	getTags(instanceId)
 }
