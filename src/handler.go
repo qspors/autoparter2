@@ -46,6 +46,6 @@ func main() {
 		log.Fatal(err)
 	}
 	for _, item := range r.Blockdevices {
-		fmt.Printf("%+v\n", item.Name)
+		fmt.Printf("%+v\n", item.Children)
 	}
 }
