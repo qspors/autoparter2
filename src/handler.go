@@ -179,7 +179,7 @@ func serviceStatus(command string, services []string) bool {
 }
 
 func main() {
-	services := []string{"lxcfs", "cron", "kaka"}
+	services := []string{"lxcfs", "cron"}
 	//driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
