@@ -152,6 +152,8 @@ func serviceStatus(command string, services []string) bool {
 			}
 		}
 		fmt.Printf("Service: %s is %s", item, string(out))
+		fmt.Println(out)
+		fmt.Printf(string(out))
 		if string(out) == "active" {
 			fmt.Printf("Stop service: %s", item)
 			invokeStop := exec.Command("systemctl", command, item)
