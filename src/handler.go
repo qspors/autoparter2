@@ -138,8 +138,7 @@ func dirsExist(volInfo map[string]int64) bool {
 	return true
 }
 
-func serviceStatus() bool {
-	services := []string{"lxcfs", "cron"}
+func serviceStatus(command string, services []string) bool {
 	for _, item := range services {
 
 		cmd := exec.Command("systemctl", "check", item)
@@ -158,10 +157,11 @@ func serviceStatus() bool {
 }
 
 func main() {
+	services := []string{"lxcfs", "cron", "kaka"}
 	//driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
-	statusOfService := serviceStatus()
+	statusOfService := serviceStatus("stop", services)
 	fmt.Println(statusOfService)
 }
