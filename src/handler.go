@@ -154,7 +154,7 @@ func serviceStatus(command string, services []string) bool {
 		outString := string(out)
 		outString = strings.TrimSpace(outString)
 		outString = strings.Trim(outString, "\t \n")
-		fmt.Printf("Service: %s status is %s", item, outString)
+		fmt.Printf("Service: %s status is %s\n", item, outString)
 		if strings.EqualFold(outString, "active") && command == "stop" {
 			fmt.Printf("Stop service: %s\n", item)
 			invokeStop := exec.Command("systemctl", command, item)
