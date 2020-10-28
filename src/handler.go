@@ -139,9 +139,20 @@ func dirsExist(volInfo map[string]int64) bool {
 }
 
 func serviceStatus() bool {
-	services := []string{"sshd", "lxcfs"}
+	services := []string{"lxcfs"}
 	for _, item := range services {
-		fmt.Println(item)
+
+		cmd := exec.Command("systemctl", "check", item)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			if exitErr, ok := err.(*exec.ExitError); ok {
+				fmt.Printf("systemctl finished with non-zero: %v\n", exitErr)
+			} else {
+				fmt.Printf("failed to run systemctl: %v", err)
+				os.Exit(1)
+			}
+		}
+		fmt.Printf("Status is: %s\n", string(out))
 	}
 	return true
 }
