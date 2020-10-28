@@ -126,16 +126,9 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 
 func prepareDirs(volInfo map[string]int64) bool {
 	for key, _ := range volInfo {
-		point, _ := os.Stat(key)
-		if point.IsDir() {
-			fmt.Println("Dir is existing: ", key)
-		} else {
-			fmt.Println("Create directory: ", key)
-			_, err := exec.Command("mkdir", "-p", key).Output()
-			if err != nil {
-				log.Fatal(err)
-				return false
-			}
+		_, err := os.Stat(key)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 	return true
