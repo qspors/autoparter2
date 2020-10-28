@@ -19,6 +19,11 @@ type Drives struct {
 	BlockDevices []BlockDevice `json:"blockdevices"`
 }
 
+type State struct {
+	stop  string
+	start string
+}
+
 type BlockDevice struct {
 	Name     string        `json:"name"`
 	Size     string        `json:"size"`
@@ -138,7 +143,7 @@ func dirsExist(volInfo map[string]int64) bool {
 	return true
 }
 
-func serviceStatus(command string, services []string) bool {
+func serviceStatus(command string, services []string) {
 	for _, item := range services {
 
 		cmd := exec.Command("systemctl", "check", item)
@@ -148,7 +153,6 @@ func serviceStatus(command string, services []string) bool {
 		outString = strings.Trim(outString, "\t \n")
 		if err != nil {
 			if _, ok := err.(*exec.ExitError); ok {
-
 			} else {
 				fmt.Printf("failed to run systemctl: %v", err)
 				os.Exit(1)
@@ -182,15 +186,14 @@ func serviceStatus(command string, services []string) bool {
 			}
 		}
 	}
-	return true
 }
 
 func main() {
+	s := State{start: "start", stop: "stop"}
 	services := []string{"lxcfs", "cron"}
 	//driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
-	statusOfService := serviceStatus("start", services)
-	fmt.Println(statusOfService)
+	serviceStatus(s.stop, services)
 }
