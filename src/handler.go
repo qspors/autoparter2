@@ -142,7 +142,7 @@ func serviceStatus(command string, services []string) bool {
 	for _, item := range services {
 
 		cmd := exec.Command("systemctl", "check", item)
-		_, err := cmd.CombinedOutput()
+		out, err := cmd.CombinedOutput()
 		if err != nil {
 			if exitErr, ok := err.(*exec.ExitError); ok {
 				fmt.Printf("systemctl finished with non-zero: %v\n", exitErr)
@@ -151,14 +151,27 @@ func serviceStatus(command string, services []string) bool {
 				os.Exit(1)
 			}
 		}
-		invoke := exec.Command("systemctl", command, item)
-		_, err2 := invoke.CombinedOutput()
-		if err2 != nil {
-			if exitErr2, ok := err2.(*exec.ExitError); ok {
-				fmt.Printf("systemctl finished with non-zero: %v\n", exitErr2)
-			} else {
-				fmt.Printf("failed to run systemctl: %v", err2)
-				os.Exit(1)
+		if string(out) == "active" && command == "stop" {
+			invokeStop := exec.Command("systemctl", command, item)
+			_, err2 := invokeStop.CombinedOutput()
+			if err2 != nil {
+				if exitErr2, ok := err2.(*exec.ExitError); ok {
+					fmt.Printf("systemctl finished with non-zero: %v\n", exitErr2)
+				} else {
+					fmt.Printf("failed to run systemctl: %v", err2)
+					os.Exit(1)
+				}
+			}
+		} else if string(out) == "inactive" && command == "start" {
+			invokeStart := exec.Command("systemctl", command, item)
+			_, err3 := invokeStart.CombinedOutput()
+			if err3 != nil {
+				if exitErr3, ok := err3.(*exec.ExitError); ok {
+					fmt.Printf("systemctl finished with non-zero: %v\n", exitErr3)
+				} else {
+					fmt.Printf("failed to run systemctl: %v", err3)
+					os.Exit(1)
+				}
 			}
 		}
 	}
