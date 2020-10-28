@@ -86,7 +86,7 @@ func getVolumeInfo(instanceId string) {
 		log.Fatal(err)
 	}
 	for _, vol := range response.Volumes {
-		fmt.Println(vol.Size)
+		fmt.Println(*vol.Size)
 		for _, tags := range vol.Tags {
 			if *tags.Key == "mount" {
 				fmt.Println(*tags.Value)
