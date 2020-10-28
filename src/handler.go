@@ -129,7 +129,6 @@ func prepareDirs(volInfo map[string]int64) bool {
 		point, err := os.Stat(key)
 		if err != nil {
 			log.Fatal(err)
-			return false
 		}
 		if point.IsDir() {
 			fmt.Println("Dir is existing: ", key)
