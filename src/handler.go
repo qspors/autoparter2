@@ -124,7 +124,7 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 	return driveMap
 }
 
-func prepareDirs(volInfo map[string]int64) bool {
+func dirsExist(volInfo map[string]int64) bool {
 	for key, _ := range volInfo {
 		if _, err := os.Stat(key); os.IsNotExist(err) {
 			log.Println("Create dir: ", key)
@@ -138,9 +138,19 @@ func prepareDirs(volInfo map[string]int64) bool {
 	return true
 }
 
+func serviceStatus() bool {
+	services := []string{"sshd", "lxcfs"}
+	for _, item := range services {
+		fmt.Println(item)
+	}
+	return true
+}
+
 func main() {
 	//driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
-	dirsIsReady := prepareDirs(volInfo)
+	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
+	statusOfService := serviceStatus()
+	fmt.Println(statusOfService)
 }
