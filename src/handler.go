@@ -128,7 +128,7 @@ func prepareDirs(volInfo map[string]int64) bool {
 	for key, _ := range volInfo {
 		_, err := os.Stat(key)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("Dir is not exist: ", key)
 		}
 	}
 	return true
