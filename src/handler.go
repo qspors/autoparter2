@@ -191,6 +191,6 @@ func main() {
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
-	statusOfService := serviceStatus("stop", services)
+	statusOfService := serviceStatus("start", services)
 	fmt.Println(statusOfService)
 }
