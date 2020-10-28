@@ -139,7 +139,7 @@ func dirsExist(volInfo map[string]int64) bool {
 }
 
 func serviceStatus() bool {
-	services := []string{"lxcfs"}
+	services := []string{"lxcfs", "cron"}
 	for _, item := range services {
 
 		cmd := exec.Command("systemctl", "check", item)
@@ -152,7 +152,7 @@ func serviceStatus() bool {
 				os.Exit(1)
 			}
 		}
-		fmt.Printf("Status is: %s\n", string(out))
+		fmt.Printf("Status service: %s is: %s\n", item, string(out))
 	}
 	return true
 }
