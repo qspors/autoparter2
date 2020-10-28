@@ -64,7 +64,7 @@ func getInstanceId() string {
 	return string(body)
 }
 
-func getVolumeInfo(instanceId string) {
+func getVolumeInfo(instanceId string) map[string]int64 {
 	driveMap := make(map[string]int64)
 	ses, err := session.NewSession(&aws.Config{
 		Region: aws.String("us-east-1")},
@@ -96,9 +96,12 @@ func getVolumeInfo(instanceId string) {
 			}
 		}
 	}
-	fmt.Printf("%+v", driveMap)
+	return driveMap
 }
 
 func main() {
-	getVolumeInfo(getInstanceId())
+	volInfo := getVolumeInfo(getInstanceId())
+	for key, value := range volInfo {
+		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
+	}
 }
