@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -125,7 +126,20 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 
 func prepareDirs(volInfo map[string]int64) bool {
 	for key, _ := range volInfo {
-		fmt.Println(key)
+		point, err := os.Stat(key)
+		if err != nil {
+			log.Fatal(err)
+			return false
+		}
+		if point.IsDir() {
+			fmt.Println("Dir is existing: ", key)
+		} else {
+			_, err := exec.Command("mkdir", "-p", key).Output()
+			if err != nil {
+				log.Fatal(err)
+				return false
+			}
+		}
 	}
 	return true
 }
