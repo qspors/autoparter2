@@ -190,12 +190,18 @@ func serviceStatus(command string, services []string) {
 func moveData(drives map[string]int64, volumes map[string]int64) {
 
 	for driveLabel, driveSize := range drives {
-		fmt.Printf("DriveLabel: %s DriveSize: %d\n", driveLabel, driveSize)
-	}
-	for dirName, dirSize := range volumes {
-		fmt.Printf("DirName: %s DirSize: %d\n", dirName, dirSize)
+		for dirName, dirSize := range volumes {
+			if driveSize == dirSize {
+				doSomething(driveLabel)
+				delete(volumes, dirName)
+			}
+		}
 	}
 
+}
+
+func doSomething(label string) {
+	fmt.Printf("task for %s\n", label)
 }
 
 func mountDrive(driveName string, directory string) bool {
