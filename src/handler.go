@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"reflect"
 )
 
 func UnmarshalDrives(data []byte) (Drives, error) {
@@ -86,7 +87,7 @@ func getVolumeInfo(instanceId string) {
 		log.Fatal(err)
 	}
 	fmt.Println(response)
-
+	fmt.Println(reflect.TypeOf(response))
 }
 
 func main() {
