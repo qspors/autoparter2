@@ -152,7 +152,7 @@ func serviceStatus(command string, services []string) bool {
 			}
 		}
 		fmt.Printf("Service: %s is %s", item, string(out))
-
+		fmt.Println(1)
 		if strings.EqualFold(string(out), "active") {
 			fmt.Printf("Stop service: %s", item)
 			invokeStop := exec.Command("systemctl", command, item)
@@ -166,6 +166,7 @@ func serviceStatus(command string, services []string) bool {
 				}
 			}
 		}
+		fmt.Println(2)
 		if strings.EqualFold(string(out), "inactive") {
 			fmt.Printf("Start service: %s", item)
 			invokeStart := exec.Command("systemctl", command, item)
@@ -179,7 +180,9 @@ func serviceStatus(command string, services []string) bool {
 				}
 			}
 		}
+		fmt.Println(3)
 	}
+	fmt.Println(4)
 	return true
 }
 
