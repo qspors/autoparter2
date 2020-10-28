@@ -61,11 +61,12 @@ func getDrives() map[string]int {
 					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
 						return strings.ContainsRune("T", r)
 					})[0]
-					size, err := strconv.Atoi(splitString)
+					size, err := strconv.ParseFloat(splitString, 64)
+					newSize := size * 1024
 					if err != nil {
 						log.Fatal(err)
 					}
-					driveMap[itm.Name] = size * 1024
+					driveMap[itm.Name] = int(newSize)
 				}
 			}
 		}
