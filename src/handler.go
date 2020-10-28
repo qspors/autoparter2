@@ -95,7 +95,6 @@ func getVolumeInfo(instanceId string) {
 
 			}
 		}
-		fmt.Println("###################################")
 	}
 	fmt.Printf("%+v", driveMap)
 }
