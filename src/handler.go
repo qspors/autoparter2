@@ -14,12 +14,6 @@ import (
 	"strings"
 )
 
-func UnmarshalDrives(data []byte) (Drives, error) {
-	var r Drives
-	err := json.Unmarshal(data, &r)
-	return r, err
-}
-
 type Drives struct {
 	BlockDevices []BlockDevice `json:"blockdevices"`
 }
@@ -28,6 +22,12 @@ type BlockDevice struct {
 	Name     string        `json:"name"`
 	Size     string        `json:"size"`
 	Children []BlockDevice `json:"children,omitempty"`
+}
+
+func UnmarshalDrives(data []byte) (Drives, error) {
+	var r Drives
+	err := json.Unmarshal(data, &r)
+	return r, err
 }
 
 func getDrives() map[string]int {
@@ -74,7 +74,6 @@ func getDrives() map[string]int {
 	return driveMap
 }
 
-func Split(r rune) {}
 func getInstanceId() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
 	if err != nil {
@@ -124,13 +123,16 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 	return driveMap
 }
 
+func prepareDirs(volInfo map[string]int64) bool {
+	for key, _ := range volInfo {
+		fmt.Println(key)
+	}
+	return true
+}
+
 func main() {
-	driveMap := getDrives()
+	//driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
-	for key, value := range volInfo {
-		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
-	}
-	for key, value := range driveMap {
-		fmt.Printf("Volume path: %s, Volume size: %d\n", key, value)
-	}
+	dirsIsReady := prepareDirs(volInfo)
+	fmt.Println(dirsIsReady)
 }
