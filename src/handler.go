@@ -47,7 +47,7 @@ func getDrives() map[string]string {
 			if len(itm.Children) == 0 {
 
 				splitedString := strings.FieldsFunc(itm.Size, Split)
-				fmt.Printf("%+v\n", splitedString)
+				fmt.Printf("%+v\n", splitedString[0])
 				driveMap[itm.Name] = itm.Size
 			}
 		}
