@@ -100,8 +100,12 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 }
 
 func main() {
+	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	for key, value := range volInfo {
+		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
+	}
+	for key, value := range driveMap {
 		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
 	}
 }
