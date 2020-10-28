@@ -189,12 +189,8 @@ func serviceStatus(command string, services []string) {
 
 func moveData(drives map[string]int64, volumes map[string]int64) {
 
-	for key, val := range drives {
-		fmt.Printf("Drives KEY:%s VAL %d\n", key, val)
-	}
-
-	for key, val := range volumes {
-		fmt.Printf("Volumes KEY:%s VAL %d\n", key, val)
+	for driveLabel, driveSize := range drives {
+		fmt.Printf("DriveLabel: %s DriveSize: %d\n", driveLabel, driveSize)
 	}
 
 }
@@ -206,6 +202,8 @@ func mountDrive(driveName string, directory string) bool {
 func unmountDrive(driveName string) bool {
 	return true
 }
+
+func fstabConfig(driveName string, directory string) {}
 
 func main() {
 	s := State{start: "start", stop: "stop"}
