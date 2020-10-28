@@ -126,9 +126,8 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 
 func prepareDirs(volInfo map[string]int64) bool {
 	for key, _ := range volInfo {
-		_, err := os.Stat(key)
-		if err != nil {
-			fmt.Println(err.Error())
+		if _, err := os.Stat(key); os.IsNotExist(err) {
+			fmt.Println("Path is not exist")
 		}
 	}
 	return true
