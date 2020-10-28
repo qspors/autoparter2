@@ -151,8 +151,8 @@ func serviceStatus(command string, services []string) bool {
 				os.Exit(1)
 			}
 		}
-		fmt.Printf("Service: %s is %s", item, string(out))
-		if "active" == "active" {
+		serviceState := string(out)
+		if serviceState == "active" {
 			fmt.Printf("Stop service: %s", item)
 			invokeStop := exec.Command("systemctl", command, item)
 			_, err2 := invokeStop.CombinedOutput()
@@ -165,8 +165,7 @@ func serviceStatus(command string, services []string) bool {
 				}
 			}
 		}
-		fmt.Println(2)
-		if string(out) == "inactive" {
+		if serviceState == "inactive" {
 			fmt.Printf("Start service: %s", item)
 			invokeStart := exec.Command("systemctl", command, item)
 			_, err3 := invokeStart.CombinedOutput()
@@ -179,9 +178,8 @@ func serviceStatus(command string, services []string) bool {
 				}
 			}
 		}
-		fmt.Println(3)
+
 	}
-	fmt.Println(4)
 	return true
 }
 
