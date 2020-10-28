@@ -47,7 +47,7 @@ func getDrives() map[string]string {
 			if len(itm.Children) == 0 {
 
 				if strings.Contains(itm.Size, "G") {
-					fmt.Println("Contain G")
+					fmt.Println("Contain X")
 				} else if strings.Contains(itm.Size, "T") {
 					fmt.Println("Contain T")
 				}
