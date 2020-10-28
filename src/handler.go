@@ -106,6 +106,6 @@ func main() {
 		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
 	}
 	for key, value := range driveMap {
-		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
+		fmt.Printf("Volume path: %s, Volume size: %d\n", key, value)
 	}
 }
