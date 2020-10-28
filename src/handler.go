@@ -154,7 +154,7 @@ func serviceStatus(command string, services []string) bool {
 		outString := string(out)
 		outString = strings.TrimSpace(outString)
 		outString = strings.Trim(outString, "\t \n")
-
+		fmt.Printf("Service: %s status is %s", item, outString)
 		if strings.EqualFold(outString, "active") && command == "stop" {
 			fmt.Printf("Stop service: %s\n", item)
 			invokeStop := exec.Command("systemctl", command, item)
@@ -181,7 +181,6 @@ func serviceStatus(command string, services []string) bool {
 				}
 			}
 		}
-
 	}
 	return true
 }
@@ -192,6 +191,6 @@ func main() {
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
-	statusOfService := serviceStatus("stop", services)
+	statusOfService := serviceStatus("start", services)
 	fmt.Println(statusOfService)
 }
