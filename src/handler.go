@@ -46,8 +46,13 @@ func getDrives() map[string]string {
 		default:
 			if len(itm.Children) == 0 {
 
-				if strings.Contains(itm.Size, "X") {
-					fmt.Println("Contain X")
+				if strings.Contains(itm.Size, "G") {
+
+					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
+						return strings.ContainsRune("G", r)
+					})[0]
+					fmt.Println(splitString)
+
 				} else if strings.Contains(itm.Size, "T") {
 					fmt.Println("Contain T")
 				}
