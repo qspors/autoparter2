@@ -134,6 +134,7 @@ func prepareDirs(volInfo map[string]int64) bool {
 		if point.IsDir() {
 			fmt.Println("Dir is existing: ", key)
 		} else {
+			fmt.Println("Create directory: ", key)
 			_, err := exec.Command("mkdir", "-p", key).Output()
 			if err != nil {
 				log.Fatal(err)
