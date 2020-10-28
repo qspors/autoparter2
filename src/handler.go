@@ -90,7 +90,7 @@ func getVolumeInfo(instanceId string) {
 		for _, tags := range vol.Tags {
 			if *tags.Key == "mount" {
 				if *tags.Value != "none" {
-					driveMap[*tags.Key] = *vol.Size
+					driveMap[*tags.Value] = *vol.Size
 				}
 
 			}
