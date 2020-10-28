@@ -10,6 +10,8 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"strconv"
+	"strings"
 )
 
 func UnmarshalDrives(data []byte) (Drives, error) {
@@ -106,6 +108,8 @@ func main() {
 		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
 	}
 	for key, value := range driveMap {
-		fmt.Printf("Volume path: %s, Volume size: %d\n", key, value)
+		splitString := strings.Split(value, "g")[0]
+		size, _ := strconv.Atoi(splitString)
+		fmt.Printf("Volume path: %s, Volume size: %d\n", key, size)
 	}
 }
