@@ -142,7 +142,7 @@ func serviceStatus(command string, services []string) bool {
 	for _, item := range services {
 
 		cmd := exec.Command("systemctl", "check", item)
-		out, err := cmd.CombinedOutput()
+		_, err := cmd.CombinedOutput()
 		if err != nil {
 			if exitErr, ok := err.(*exec.ExitError); ok {
 				fmt.Printf("systemctl finished with non-zero: %v\n", exitErr)
@@ -151,7 +151,16 @@ func serviceStatus(command string, services []string) bool {
 				os.Exit(1)
 			}
 		}
-		fmt.Printf("Status service: %s is: %s\n", item, string(out))
+		invoke := exec.Command("systemctl", command, item)
+		_, err2 := invoke.CombinedOutput()
+		if err2 != nil {
+			if exitErr2, ok := err2.(*exec.ExitError); ok {
+				fmt.Printf("systemctl finished with non-zero: %v\n", exitErr2)
+			} else {
+				fmt.Printf("failed to run systemctl: %v", err2)
+				os.Exit(1)
+			}
+		}
 	}
 	return true
 }
