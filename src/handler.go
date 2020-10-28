@@ -62,7 +62,7 @@ func getDrives() map[string]int {
 						return strings.ContainsRune("T", r)
 					})[0]
 					size, err := strconv.ParseFloat(splitString, 64)
-					newSize := size * 1024
+					newSize := size * 1000
 					if err != nil {
 						log.Fatal(err)
 					}
