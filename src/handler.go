@@ -51,7 +51,6 @@ func getDrives() map[string]int64 {
 		case fmt.Sprintf("loop%d", idx):
 		default:
 			if len(itm.Children) == 0 {
-				fmt.Println(itm.Size)
 				if strings.Contains(itm.Size, "G") {
 
 					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
