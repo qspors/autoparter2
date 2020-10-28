@@ -46,6 +46,7 @@ func getDrives() map[string]string {
 		default:
 			if len(itm.Children) == 0 {
 				driveMap[itm.Name] = itm.Size
+				fmt.Println(itm.Size)
 			}
 		}
 	}
