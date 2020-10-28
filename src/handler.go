@@ -192,6 +192,9 @@ func moveData(drives map[string]int64, volumes map[string]int64) {
 	for driveLabel, driveSize := range drives {
 		fmt.Printf("DriveLabel: %s DriveSize: %d\n", driveLabel, driveSize)
 	}
+	for dirName, dirSize := range volumes {
+		fmt.Printf("DirName: %s DirSize: %d\n", dirName, dirSize)
+	}
 
 }
 
