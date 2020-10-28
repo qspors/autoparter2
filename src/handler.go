@@ -45,9 +45,6 @@ func getDrives() map[string]string {
 		case fmt.Sprintf("loop%d", idx):
 		default:
 			if len(itm.Children) == 0 {
-
-				splited := strings.FieldsFunc(itm.Size, Split)
-				fmt.Println("Splited stuff", splited)
 				driveMap[itm.Name] = itm.Size
 			}
 		}
@@ -55,9 +52,6 @@ func getDrives() map[string]string {
 	return driveMap
 }
 
-func Split(r rune) bool {
-	return r == 'G' || r == 'T'
-}
 func getInstanceId() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
 	if err != nil {
