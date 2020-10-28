@@ -147,8 +147,8 @@ func serviceStatus(command string, services []string) bool {
 		outString = strings.TrimSpace(outString)
 		outString = strings.Trim(outString, "\t \n")
 		if err != nil {
-			if exitErr, ok := err.(*exec.Error); ok {
-				fmt.Printf("systemctl finished with non-zero: %v\n", exitErr)
+			if _, ok := err.(*exec.ExitError); ok {
+
 			} else {
 				fmt.Printf("failed to run systemctl: %v", err)
 				os.Exit(1)
@@ -191,6 +191,6 @@ func main() {
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
-	statusOfService := serviceStatus("start", services)
+	statusOfService := serviceStatus("stop", services)
 	fmt.Println(statusOfService)
 }
