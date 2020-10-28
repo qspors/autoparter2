@@ -46,16 +46,20 @@ func getDrives() map[string]string {
 		default:
 			if len(itm.Children) == 0 {
 
-				splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
-					return strings.ContainsRune("GT", r)
-				})
-				fmt.Printf("%+v\n", splitString)
+				if strings.Contains(itm.Size, "G") {
+					fmt.Println("Contain G")
+				} else if strings.Contains(itm.Size, "T") {
+					fmt.Println("Contain T")
+				}
+
 				driveMap[itm.Name] = itm.Size
 			}
 		}
 	}
 	return driveMap
 }
+
+func Split(r rune) {}
 func getInstanceId() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
 	if err != nil {
