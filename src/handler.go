@@ -108,7 +108,7 @@ func main() {
 		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
 	}
 	for key, value := range driveMap {
-		splitString := strings.Split(value, "g")[0]
+		splitString := strings.Split(value, "G")[0]
 		size, _ := strconv.Atoi(splitString)
 		fmt.Printf("Volume path: %s, Volume size: %d\n", key, size)
 	}
