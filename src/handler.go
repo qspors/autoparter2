@@ -36,8 +36,8 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 	return r, err
 }
 
-func getDrives() map[string]int {
-	driveMap := make(map[string]int)
+func getDrives() map[string]int64 {
+	driveMap := make(map[string]int64)
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
 		log.Fatal(err)
@@ -61,7 +61,7 @@ func getDrives() map[string]int {
 					if err != nil {
 						log.Fatal(err)
 					}
-					driveMap[itm.Name] = size
+					driveMap[itm.Name] = int64(size)
 
 				} else if strings.Contains(itm.Size, "T") {
 					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
@@ -72,7 +72,7 @@ func getDrives() map[string]int {
 					if err != nil {
 						log.Fatal(err)
 					}
-					driveMap[itm.Name] = int(newSize)
+					driveMap[itm.Name] = int64(newSize)
 				}
 			}
 		}
@@ -188,12 +188,33 @@ func serviceStatus(command string, services []string) {
 	}
 }
 
+func moveData(drives map[string]int64, volumes map[string]int64) {
+
+	for key, val := range drives {
+		fmt.Printf("Drives KEY:%s VAL %d\n", key, val)
+	}
+
+	for key, val := range volumes {
+		fmt.Printf("Volumes KEY:%s VAL %d\n", key, val)
+	}
+
+}
+
+func mountDrive(driveName string, directory string) bool {
+	return true
+}
+
+func unmountDrive(driveName string) bool {
+	return true
+}
+
 func main() {
 	s := State{start: "start", stop: "stop"}
 	services := []string{"lxcfs", "cron"}
-	//driveMap := getDrives()
+	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
 	serviceStatus(s.start, services)
+	moveData(driveMap, volInfo)
 }
