@@ -86,7 +86,7 @@ func getVolumeInfo(instanceId string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(response)
+	fmt.Println(response.Volumes)
 	fmt.Println(reflect.TypeOf(response))
 }
 
