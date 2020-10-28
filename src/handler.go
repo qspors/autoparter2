@@ -143,20 +143,20 @@ func serviceStatus(command string, services []string) bool {
 
 		cmd := exec.Command("systemctl", "check", item)
 		out, err := cmd.CombinedOutput()
+		outString := string(out)
+		outString = strings.TrimSpace(outString)
+		outString = strings.Trim(outString, "\t \n")
 		if err != nil {
-			if exitErr, ok := err.(*exec.ExitError); ok {
+			if exitErr, ok := err.(*exec.Error); ok {
 				fmt.Printf("systemctl finished with non-zero: %v\n", exitErr)
 			} else {
 				fmt.Printf("failed to run systemctl: %v", err)
 				os.Exit(1)
 			}
 		}
-		outString := string(out)
-		outString = strings.TrimSpace(outString)
-		outString = strings.Trim(outString, "\t \n")
-		fmt.Printf("Service: %s status is %s\n", item, outString)
+
 		if strings.EqualFold(outString, "active") && command == "stop" {
-			fmt.Printf("Stop service: %s\n", item)
+
 			invokeStop := exec.Command("systemctl", command, item)
 			_, err2 := invokeStop.CombinedOutput()
 			if err2 != nil {
@@ -169,7 +169,7 @@ func serviceStatus(command string, services []string) bool {
 			}
 		}
 		if strings.EqualFold(outString, "inactive") && command == "start" {
-			fmt.Printf("Start service: %s\n", item)
+
 			invokeStart := exec.Command("systemctl", command, item)
 			_, err3 := invokeStart.CombinedOutput()
 			if err3 != nil {
@@ -191,6 +191,6 @@ func main() {
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
-	statusOfService := serviceStatus("start", services)
+	statusOfService := serviceStatus("stop", services)
 	fmt.Println(statusOfService)
 }
