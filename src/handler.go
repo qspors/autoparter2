@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
-	"reflect"
 	"strconv"
 	"strings"
 )
@@ -31,8 +30,8 @@ type BlockDevice struct {
 	Children []BlockDevice `json:"children,omitempty"`
 }
 
-func getDrives() map[string]string {
-	driveMap := make(map[string]string)
+func getDrives() map[string]int {
+	driveMap := make(map[string]int)
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
 	if err != nil {
 		log.Fatal(err)
@@ -52,13 +51,22 @@ func getDrives() map[string]string {
 					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
 						return strings.ContainsRune("G", r)
 					})[0]
-					fmt.Println(reflect.TypeOf(splitString))
+					size, err := strconv.Atoi(splitString)
+					if err != nil {
+						log.Fatal(err)
+					}
+					driveMap[itm.Name] = size
 
 				} else if strings.Contains(itm.Size, "T") {
-					fmt.Println("Contain T")
+					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
+						return strings.ContainsRune("T", r)
+					})[0]
+					size, err := strconv.Atoi(splitString)
+					if err != nil {
+						log.Fatal(err)
+					}
+					driveMap[itm.Name] = size * 1024
 				}
-
-				driveMap[itm.Name] = itm.Size
 			}
 		}
 	}
@@ -122,8 +130,6 @@ func main() {
 		fmt.Printf("Volume mount point: %s, Volume size: %d\n", key, value)
 	}
 	for key, value := range driveMap {
-		splitString := strings.Split(value, "G")[0]
-		size, _ := strconv.Atoi(splitString)
-		fmt.Printf("Volume path: %s, Volume size: %d\n", key, size)
+		fmt.Printf("Volume path: %s, Volume size: %d\n", key, value)
 	}
 }
