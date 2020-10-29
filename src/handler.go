@@ -241,7 +241,7 @@ func createDrive(label string, filesystem string) string {
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	time.Sleep(10 * time.Second)
-	fmt.Printf("Format new partition for: %s\n", fullPartPath)
+	fmt.Printf("Format using command: %s new partition for: %s\n", formatCommand, fullPartPath)
 	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
