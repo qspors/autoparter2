@@ -241,7 +241,7 @@ func createDrive(label string, filesystem string) string {
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		fmt.Println(err2)
 	}
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	fmt.Printf("Format new partition for :%s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
