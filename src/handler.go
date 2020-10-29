@@ -250,7 +250,7 @@ func createDrive(label string, filesystem string) string {
 		fmt.Println(err3)
 	}
 	fmt.Printf("Partition: %s create completed!!!\n", fullPartPath)
-	return driveSuffix
+	return fullPartPath
 }
 func createTempDir(tempDir string) {
 	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
@@ -262,7 +262,7 @@ func createTempDir(tempDir string) {
 	}
 }
 func mountDrive(label string, directory string) {
-	fmt.Printf("Mound part: %s to dir: %s\n", label, directory)
+	fmt.Printf("Mount partition: %s to dir: %s\n", label, directory)
 	out, err1 := exec.Command("mount", label, directory).Output()
 	if err1 != nil {
 		fmt.Println(err1)
