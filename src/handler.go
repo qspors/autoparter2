@@ -262,9 +262,13 @@ func createTempDir(tempDir string) {
 	}
 }
 func mountDrive(label string, directory string) {
-	if _, err1 := exec.Command("mount", label, directory).Output(); err1 != nil {
+	fmt.Printf("Mound part: %s to dir: %s\n", label, directory)
+	out, err1 := exec.Command("mount", label, directory).Output()
+	if err1 != nil {
 		fmt.Println(err1)
 	}
+	fmt.Println(string(out))
+	fmt.Println("Mount completed!!!")
 }
 func unmountDrive(label string)                  {}
 func copyData(dir string, tempDir string)        {}
