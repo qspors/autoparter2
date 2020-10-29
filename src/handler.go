@@ -209,7 +209,6 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
-				fmt.Printf("Drive: %s, Size %d\n", driveLabel, driveSize)
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 			}
@@ -246,7 +245,7 @@ func createDrive(label string, filesystem string) string {
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
-	fmt.Printf("Partition: %s\n create completed!!!", fullPartPath)
+	fmt.Printf("Partition: %s create completed!!!\n", fullPartPath)
 	return driveSuffix
 }
 func createTempDir(tempDir string) {
