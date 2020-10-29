@@ -228,18 +228,22 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 }
 func createDrive(label string, filesystem string) string {
-	fmt.Printf("Create new drive for :%s\n", fmt.Sprintf("/dev/%s", label))
-	if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
+	driveSuffix := getSuffix(label)
+	labelPath := fmt.Sprintf("/dev/%s", label)
+	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
+	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
+
+	fmt.Printf("Create new drive for :%s\n", labelPath)
+	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
 		fmt.Println(err1)
 	}
-	fmt.Printf("Make new partition for :%s\n", fmt.Sprintf("/dev/%s", label))
-	if _, err2 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
+	fmt.Printf("Make new partition for :%s\n", labelPath)
+	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		fmt.Println(err2)
 	}
 	time.Sleep(5 * time.Second)
-	driveSuffix := getSuffix(label)
-	fmt.Printf("Format new partition for :%s\n", fmt.Sprintf("/dev/%s", driveSuffix))
-	if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s", driveSuffix)).Output(); err3 != nil {
+	fmt.Printf("Format new partition for :%s\n", fullPartPath)
+	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
 	fmt.Printf("Partition: /dev/%s/%s create completed\n", label, driveSuffix)
