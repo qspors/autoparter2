@@ -243,7 +243,8 @@ func createDrive(label string, filesystem string) {
 		fmt.Println(err2)
 	}
 	time.Sleep(3 * time.Second)
-	getSuffix(label)
+	driveSuffix := getSuffix(label)
+	fmt.Println("DriveSuffix is:", driveSuffix)
 	//if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s/%s", label, driveSuffix)).Output(); err3 != nil {
 	//	fmt.Println(err3)
 	//}
@@ -257,6 +258,7 @@ func copyData(dir string, tempDir string)        {}
 func fstabConfig(label string, directory string) {}
 func removeTempDir(directory string)             {}
 func getSuffix(label string) string {
+	var childName string
 	fullLabel := fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
 	if err != nil {
@@ -268,10 +270,10 @@ func getSuffix(label string) string {
 	}
 	for _, item := range r.Blockdevices {
 		for _, name := range item.Children {
-			fmt.Println("Name is: ", name.Name)
+			childName = name.Name
 		}
 	}
-	return ""
+	return childName
 }
 func main() {
 	state := State{start: "start", stop: "stop"}
