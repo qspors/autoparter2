@@ -218,11 +218,12 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 func doMountingActions(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
+	createTempDir(tempDir)
 	mountDrive(fullLabel, tempDir)
 	copyData(dir, tempDir)
-	unmountDrive(label)
-	mountDrive(label, dir)
-	fstabConfig(label, dir)
+	unmountDrive(fullLabel)
+	mountDrive(fullLabel, dir)
+	fstabConfig(fullLabel, dir)
 	removeTempDir(tempDir)
 
 }
@@ -242,11 +243,20 @@ func createDrive(label string, filesystem string) string {
 		fmt.Println(err3)
 	}
 	fmt.Printf("Partition: /dev/%s/%s create completed\n", label, driveSuffix)
-	fmt.Println("EXIT")
-	os.Exit(0)
 	return driveSuffix
 }
-func mountDrive(label string, directory string)  {}
+func createTempDir(tempDir string) {
+	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
+		fmt.Println("Create temp directory: ", tempDir)
+		err := os.MkdirAll(tempDir, 0700)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+func mountDrive(label string, directory string) {
+
+}
 func unmountDrive(label string)                  {}
 func copyData(dir string, tempDir string)        {}
 func fstabConfig(label string, directory string) {}
