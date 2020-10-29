@@ -236,9 +236,9 @@ func createDrive(label string, filesystem string) string {
 	if _, err2 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		fmt.Println(err2)
 	}
-	time.Sleep(3 * time.Second)
+	time.Sleep(5 * time.Second)
 	driveSuffix := getSuffix(label)
-	fmt.Printf("Format new partition for :%s\n", fmt.Sprintf("/dev/%s", label))
+	fmt.Printf("Format new partition for :%s\n", fmt.Sprintf("/dev/%s", driveSuffix))
 	if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s", driveSuffix)).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
