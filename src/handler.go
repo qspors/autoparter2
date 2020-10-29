@@ -230,18 +230,18 @@ func doMountingActions(label string, dir string, filesystem string) {
 func createDrive(label string, filesystem string) string {
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
-	fmt.Printf("Create new drive for :%s\n", labelPath)
+	fmt.Printf("Create new drive for: %s\n", labelPath)
 	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
 		fmt.Println(err1)
 	}
-	fmt.Printf("Make new partition for :%s\n", labelPath)
+	fmt.Printf("Make new partition for: %s\n", labelPath)
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		fmt.Println(err2)
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
-	time.Sleep(3 * time.Second)
-	fmt.Printf("Format new partition for :%s\n", fullPartPath)
+	time.Sleep(10 * time.Second)
+	fmt.Printf("Format new partition for: %s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
