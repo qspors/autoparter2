@@ -228,12 +228,8 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 }
 func createDrive(label string, filesystem string) string {
-	driveSuffix := getSuffix(label)
-	fmt.Println("Drive suffix is: ", driveSuffix)
 	labelPath := fmt.Sprintf("/dev/%s", label)
-	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
-
 	fmt.Printf("Create new drive for :%s\n", labelPath)
 	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
 		fmt.Println(err1)
@@ -242,7 +238,9 @@ func createDrive(label string, filesystem string) string {
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		fmt.Println(err2)
 	}
-	time.Sleep(10 * time.Second)
+	driveSuffix := getSuffix(label)
+	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
+	time.Sleep(3 * time.Second)
 	fmt.Printf("Format new partition for :%s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
@@ -278,10 +276,10 @@ func getSuffix(label string) string {
 		log.Fatal(err)
 	}
 	for _, item := range r.Blockdevices {
-		fmt.Println("Item is: ", item)
+
 		for _, name := range item.Children {
 			childName = name.Name
-			fmt.Println("ChildName is: ", childName)
+
 		}
 	}
 	return childName
