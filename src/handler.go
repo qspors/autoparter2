@@ -209,6 +209,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
+				fmt.Printf("Drive: %s, Size %d\n", driveLabel, driveSize)
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 			}
