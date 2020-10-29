@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type State struct {
@@ -235,21 +236,18 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 }
 func createDrive(label string, filesystem string) {
-	//fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
-	//if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
-	//	fmt.Println(err1)
-	//}
-	//
-	//if _, err2 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
-	//	fmt.Println(err2)
-	//}
-	//time.Sleep(3 * time.Second)
+	fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
+	if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
+		fmt.Println(err1)
+	}
+	if _, err2 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
+		fmt.Println(err2)
+	}
+	time.Sleep(3 * time.Second)
 	getSuffix(label)
 	//if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s/%s", label, driveSuffix)).Output(); err3 != nil {
 	//	fmt.Println(err3)
 	//}
-	fmt.Println("EXIT1")
-	os.Exit(0)
 
 }
 func mountDrive(label string, directory string)  {}
