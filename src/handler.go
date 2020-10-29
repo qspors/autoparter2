@@ -227,10 +227,11 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 }
 func createDrive(label string, filesystem string) string {
-	fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
+	fmt.Printf("Create new drive for :%s\n", fmt.Sprintf("/dev/%s", label))
 	if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
 		fmt.Println(err1)
 	}
+
 	if _, err2 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		fmt.Println(err2)
 	}
@@ -239,6 +240,7 @@ func createDrive(label string, filesystem string) string {
 	if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s/%s", label, driveSuffix)).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
+	fmt.Printf("Partition: /dev/%s/%s create completed\n", label, driveSuffix)
 	return driveSuffix
 }
 func mountDrive(label string, directory string)  {}
