@@ -206,9 +206,6 @@ func serviceStatus(command string, services []string) {
 	}
 }
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
-	//fmt.Println("*******************************")
-	//fmt.Printf("Volumes before deletion: %+v\n", volumes)
-	//fmt.Println("*******************************")
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
@@ -217,16 +214,11 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 			}
 		}
 	}
-	//fmt.Printf("Volumes after deletion: %+v\n", volumes)
-	//fmt.Println("*******************************")
-	//fmt.Printf("Drives: %+v\n", drives)
-	//fmt.Println("*******************************")
-
 }
 func doMountingActions(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
-	createDrive(label, filesystem)
-	mountDrive(label, tempDir)
+	fullLabel := createDrive(label, filesystem)
+	mountDrive(fullLabel, tempDir)
 	copyData(dir, tempDir)
 	unmountDrive(label)
 	mountDrive(label, dir)
@@ -234,7 +226,7 @@ func doMountingActions(label string, dir string, filesystem string) {
 	removeTempDir(tempDir)
 
 }
-func createDrive(label string, filesystem string) {
+func createDrive(label string, filesystem string) string {
 	fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
 	if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
 		fmt.Println(err1)
@@ -244,13 +236,10 @@ func createDrive(label string, filesystem string) {
 	}
 	time.Sleep(3 * time.Second)
 	driveSuffix := getSuffix(label)
-	fmt.Println("DriveSuffix is:", driveSuffix)
-	//if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s/%s", label, driveSuffix)).Output(); err3 != nil {
-	//	fmt.Println(err3)
-	//}
-	fmt.Println("exit")
-	os.Exit(0)
-
+	if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s/%s", label, driveSuffix)).Output(); err3 != nil {
+		fmt.Println(err3)
+	}
+	return driveSuffix
 }
 func mountDrive(label string, directory string)  {}
 func unmountDrive(label string)                  {}
