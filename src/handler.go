@@ -215,6 +215,8 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 		}
 	}
 }
+
+// Do Actions
 func doMountingActions(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
@@ -227,6 +229,8 @@ func doMountingActions(label string, dir string, filesystem string) {
 	removeTempDir(tempDir)
 
 }
+
+// Action functions
 func createDrive(label string, filesystem string) string {
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
@@ -258,7 +262,9 @@ func createTempDir(tempDir string) {
 	}
 }
 func mountDrive(label string, directory string) {
-
+	if _, err1 := exec.Command("mount", label, directory).Output(); err1 != nil {
+		fmt.Println(err1)
+	}
 }
 func unmountDrive(label string)                  {}
 func copyData(dir string, tempDir string)        {}
