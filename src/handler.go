@@ -24,6 +24,12 @@ type State struct {
 	start string
 }
 
+const (
+	xfs  string = "xfs"
+	ext4 string = "ext4"
+	ext3 string = "ext3"
+)
+
 type BlockDevice struct {
 	Name     string        `json:"name"`
 	Size     string        `json:"size"`
@@ -187,46 +193,59 @@ func serviceStatus(command string, services []string) {
 	}
 }
 
-func moveData(drives map[string]int64, volumes map[string]int64) {
-	fmt.Println("*******************************")
-	fmt.Printf("Volumes before deletion: %+v\n", volumes)
-	fmt.Println("*******************************")
+func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
+	//fmt.Println("*******************************")
+	//fmt.Printf("Volumes before deletion: %+v\n", volumes)
+	//fmt.Println("*******************************")
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
-				doSomething(driveLabel, dirName)
+				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 			}
 		}
 	}
-	fmt.Printf("Volumes after deletion: %+v\n", volumes)
-	fmt.Println("*******************************")
-	fmt.Printf("Drives: %+v\n", drives)
-	fmt.Println("*******************************")
+	//fmt.Printf("Volumes after deletion: %+v\n", volumes)
+	//fmt.Println("*******************************")
+	//fmt.Printf("Drives: %+v\n", drives)
+	//fmt.Println("*******************************")
 
 }
 
-func doSomething(label string, dir string) {
-	fmt.Printf("task for vol: %s and dir: %s\n", label, dir)
-}
+func doMountingActions(label string, dir string, filesystem string) {
+	tempDir := fmt.Sprintf("/temp%s", label)
+	createDrive(label, filesystem)
+	mountDrive(label, tempDir)
+	copyData(dir, tempDir)
+	unmountDrive(label)
+	mountDrive(label, dir)
+	fstabConfig(label, dir)
+	removeTempDir(tempDir)
 
-func mountDrive(driveName string, directory string) bool {
-	return true
 }
-
-func unmountDrive(driveName string) bool {
-	return true
+func createDrive(label string, filesystem string) {
+	fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
+	createDrive, err := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	out := string(createDrive)
+	fmt.Println(out)
 }
-
-func fstabConfig(driveName string, directory string) {}
+func mountDrive(label string, directory string)  {}
+func unmountDrive(label string)                  {}
+func copyData(dir string, tempDir string)        {}
+func fstabConfig(label string, directory string) {}
+func removeTempDir(directory string)             {}
 
 func main() {
-	s := State{start: "start", stop: "stop"}
+	state := State{start: "start", stop: "stop"}
+
 	services := []string{"lxcfs", "cron"}
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsIsReady := dirsExist(volInfo)
 	fmt.Println(dirsIsReady)
-	serviceStatus(s.start, services)
-	moveData(driveMap, volInfo)
+	serviceStatus(state.start, services)
+	compareVolumeAndDrives(driveMap, volInfo, xfs)
 }
