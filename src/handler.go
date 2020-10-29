@@ -229,6 +229,7 @@ func doMountingActions(label string, dir string, filesystem string) {
 }
 func createDrive(label string, filesystem string) string {
 	driveSuffix := getSuffix(label)
+	fmt.Println("Drive suffix is: ", driveSuffix)
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
