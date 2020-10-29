@@ -73,7 +73,6 @@ func getDrives() map[string]int64 {
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
 		default:
-			fmt.Printf("SUFFIX: %s", itm.Children)
 			if len(itm.Children) == 0 {
 				if strings.Contains(itm.Size, "G") {
 
