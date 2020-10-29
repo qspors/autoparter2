@@ -15,15 +15,36 @@ import (
 	"strings"
 )
 
-type Drives struct {
-	BlockDevices []BlockDevice `json:"blockdevices"`
-}
-type drSuffix struct {
-	Blockdevices []SufDrive `json:"blockdevices"`
-}
 type State struct {
 	stop  string
 	start string
+}
+type Drives struct {
+	BlockDevices []BlockDevice `json:"blockdevices"`
+}
+type BlockDevice struct {
+	Name     string        `json:"name"`
+	Size     string        `json:"size"`
+	Children []BlockDevice `json:"children,omitempty"`
+}
+type Suffixes struct {
+	Blockdevices []SuffixDevice `json:"blockdevices"`
+}
+type SuffixDevice struct {
+	Name       string         `json:"name"`
+	MajMin     string         `json:"maj:min"`
+	Rm         string         `json:"rm"`
+	Size       string         `json:"size"`
+	Ro         string         `json:"ro"`
+	Type       string         `json:"type"`
+	Mountpoint interface{}    `json:"mountpoint"`
+	Children   []SuffixDevice `json:"children,omitempty"`
+}
+
+func UnmarshalSuffix(data []byte) (Suffixes, error) {
+	var r Suffixes
+	err := json.Unmarshal(data, &r)
+	return r, err
 }
 
 const (
@@ -32,24 +53,8 @@ const (
 	ext3 string = "ext3"
 )
 
-type BlockDevice struct {
-	Name     string        `json:"name"`
-	Size     string        `json:"size"`
-	Children []BlockDevice `json:"children,omitempty"`
-}
-type SufDrive struct {
-	Children []SufDrive `json:"children,omitempty"`
-}
-
-var Suffix string
-
 func UnmarshalDrives(data []byte) (Drives, error) {
 	var r Drives
-	err := json.Unmarshal(data, &r)
-	return r, err
-}
-func UnmarshalSuffix(data []byte) (drSuffix, error) {
-	var r drSuffix
 	err := json.Unmarshal(data, &r)
 	return r, err
 }
@@ -253,7 +258,9 @@ func copyData(dir string, tempDir string)        {}
 func fstabConfig(label string, directory string) {}
 func removeTempDir(directory string)             {}
 func getSuffix(label string) string {
-	out, err := exec.Command("lsblk", "-J", "-a", fmt.Sprintf("/dev/%s", label)).Output()
+	fullLabel := fmt.Sprintf("/dev/%s", label)
+	fmt.Println("Full label: ", fullLabel)
+	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
 	if err != nil {
 		log.Fatal(err)
 	}
