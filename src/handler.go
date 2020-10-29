@@ -246,7 +246,7 @@ func createDrive(label string, filesystem string) string {
 	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
-	fmt.Printf("Partition: %s\n", fullPartPath)
+	fmt.Printf("Partition: %s\n create completed!!!", fullPartPath)
 	return driveSuffix
 }
 func createTempDir(tempDir string) {
