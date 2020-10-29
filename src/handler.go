@@ -36,6 +36,8 @@ type BlockDevice struct {
 	Children []BlockDevice `json:"children,omitempty"`
 }
 
+var Suffix string
+
 func UnmarshalDrives(data []byte) (Drives, error) {
 	var r Drives
 	err := json.Unmarshal(data, &r)
@@ -56,6 +58,7 @@ func getDrives() map[string]int64 {
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
 		default:
+			fmt.Printf("SUFFIX: %s", itm.Children)
 			if len(itm.Children) == 0 {
 				if strings.Contains(itm.Size, "G") {
 
@@ -225,15 +228,16 @@ func doMountingActions(label string, dir string, filesystem string) {
 }
 func createDrive(label string, filesystem string) {
 	fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
-	if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
-		fmt.Println(err1)
-	}
-	out := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%")
-	mkPartOutput, err := out.CombinedOutput()
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(string(mkPartOutput))
+	//if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
+	//	fmt.Println(err1)
+	//}
+	//if _, err2 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
+	//	fmt.Println(err2)
+	//}
+	//time.Sleep(3 * time.Second)
+	//if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s", label)).Output(); err3 != nil {
+	//	fmt.Println(err3)
+	//}
 	fmt.Println("EXIT1")
 	os.Exit(0)
 
