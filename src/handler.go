@@ -18,7 +18,9 @@ import (
 type Drives struct {
 	BlockDevices []BlockDevice `json:"blockdevices"`
 }
-
+type drSuffix struct {
+	Blockdevices []SufDrive `json:"blockdevices"`
+}
 type State struct {
 	stop  string
 	start string
@@ -35,6 +37,9 @@ type BlockDevice struct {
 	Size     string        `json:"size"`
 	Children []BlockDevice `json:"children,omitempty"`
 }
+type SufDrive struct {
+	Children []SufDrive `json:"children,omitempty"`
+}
 
 var Suffix string
 
@@ -43,7 +48,11 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 	err := json.Unmarshal(data, &r)
 	return r, err
 }
-
+func UnmarshalSuffix(data []byte) (drSuffix, error) {
+	var r drSuffix
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
 func getDrives() map[string]int64 {
 	driveMap := make(map[string]int64)
 	out, err := exec.Command("lsblk", "-J", "-a").Output()
@@ -87,7 +96,6 @@ func getDrives() map[string]int64 {
 	}
 	return driveMap
 }
-
 func getInstanceId() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
 	if err != nil {
@@ -101,7 +109,6 @@ func getInstanceId() string {
 
 	return string(body)
 }
-
 func getVolumeInfo(instanceId string) map[string]int64 {
 	driveMap := make(map[string]int64)
 	ses, err := session.NewSession(&aws.Config{
@@ -136,7 +143,6 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 	}
 	return driveMap
 }
-
 func dirsExist(volInfo map[string]int64) bool {
 	for key, _ := range volInfo {
 		if _, err := os.Stat(key); os.IsNotExist(err) {
@@ -150,7 +156,6 @@ func dirsExist(volInfo map[string]int64) bool {
 	}
 	return true
 }
-
 func serviceStatus(command string, services []string) {
 	for _, item := range services {
 
@@ -195,7 +200,6 @@ func serviceStatus(command string, services []string) {
 		}
 	}
 }
-
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
 	//fmt.Println("*******************************")
 	//fmt.Printf("Volumes before deletion: %+v\n", volumes)
@@ -214,7 +218,6 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	//fmt.Println("*******************************")
 
 }
-
 func doMountingActions(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
 	createDrive(label, filesystem)
@@ -227,15 +230,17 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 }
 func createDrive(label string, filesystem string) {
-	fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
+	//fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
 	//if _, err1 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output(); err1 != nil {
 	//	fmt.Println(err1)
 	//}
+	//
 	//if _, err2 := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 	//	fmt.Println(err2)
 	//}
 	//time.Sleep(3 * time.Second)
-	//if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s", label)).Output(); err3 != nil {
+	getSuffix(label)
+	//if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s/%s", label, driveSuffix)).Output(); err3 != nil {
 	//	fmt.Println(err3)
 	//}
 	fmt.Println("EXIT1")
@@ -247,7 +252,20 @@ func unmountDrive(label string)                  {}
 func copyData(dir string, tempDir string)        {}
 func fstabConfig(label string, directory string) {}
 func removeTempDir(directory string)             {}
-
+func getSuffix(label string) string {
+	out, err := exec.Command("lsblk", "-J", "-a", fmt.Sprintf("/dev/%s", label)).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	r, err := UnmarshalSuffix(out)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, item := range r.Blockdevices {
+		fmt.Println(item.Children)
+	}
+	return ""
+}
 func main() {
 	state := State{start: "start", stop: "stop"}
 
