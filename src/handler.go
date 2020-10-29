@@ -227,7 +227,7 @@ func createDrive(label string, filesystem string) {
 	fmt.Printf("Create new drive for :%s", fmt.Sprintf("/dev/%s", label))
 	createDrive, err := exec.Command("parted", "-s", fmt.Sprintf("/dev/%s", label), "mktable", "gpt").Output()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	out := string(createDrive)
 	fmt.Println(out)
