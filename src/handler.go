@@ -247,6 +247,8 @@ func createDrive(label string, filesystem string) {
 	//if _, err3 := exec.Command(fmt.Sprintf("mkfs.%s", filesystem), fmt.Sprintf("/dev/%s/%s", label, driveSuffix)).Output(); err3 != nil {
 	//	fmt.Println(err3)
 	//}
+	fmt.Println("exit")
+	os.Exit(0)
 
 }
 func mountDrive(label string, directory string)  {}
@@ -256,7 +258,6 @@ func fstabConfig(label string, directory string) {}
 func removeTempDir(directory string)             {}
 func getSuffix(label string) string {
 	fullLabel := fmt.Sprintf("/dev/%s", label)
-	fmt.Println("Full label: ", fullLabel)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
 	if err != nil {
 		log.Fatal(err)
@@ -276,8 +277,7 @@ func main() {
 	services := []string{"lxcfs", "cron"}
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
-	dirsIsReady := dirsExist(volInfo)
-	fmt.Println(dirsIsReady)
+	dirsExist(volInfo)
 	serviceStatus(state.start, services)
 	compareVolumeAndDrives(driveMap, volInfo, xfs)
 }
