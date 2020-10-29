@@ -189,7 +189,7 @@ func serviceStatus(command string, services []string) {
 
 func moveData(drives map[string]int64, volumes map[string]int64) {
 	fmt.Println("*******************************")
-	fmt.Printf("%+v\n", volumes)
+	fmt.Printf("Volumes before deletion: %+v\n", volumes)
 	fmt.Println("*******************************")
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
@@ -199,9 +199,9 @@ func moveData(drives map[string]int64, volumes map[string]int64) {
 			}
 		}
 	}
-	fmt.Printf("%+v\n", volumes)
+	fmt.Printf("Volumes after deletion: %+v\n", volumes)
 	fmt.Println("*******************************")
-	fmt.Printf("%+v\n", drives)
+	fmt.Printf("Drives: %+v\n", drives)
 	fmt.Println("*******************************")
 
 }
