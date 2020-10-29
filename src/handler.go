@@ -241,6 +241,8 @@ func createDrive(label string, filesystem string) string {
 		fmt.Println(err3)
 	}
 	fmt.Printf("Partition: /dev/%s/%s create completed\n", label, driveSuffix)
+	fmt.Println("EXIT")
+	os.Exit(0)
 	return driveSuffix
 }
 func mountDrive(label string, directory string)  {}
