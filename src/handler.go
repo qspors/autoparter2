@@ -267,7 +267,9 @@ func getSuffix(label string) string {
 		log.Fatal(err)
 	}
 	for _, item := range r.Blockdevices {
-		fmt.Println("Suffix IS: ", item.Children)
+		for name := range item.Children {
+			fmt.Println("Name is: ", name)
+		}
 	}
 	return ""
 }
