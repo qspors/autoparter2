@@ -194,7 +194,7 @@ func moveData(drives map[string]int64, volumes map[string]int64) {
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
-				doSomething(driveLabel)
+				doSomething(driveLabel, dirName)
 				delete(volumes, dirName)
 			}
 		}
@@ -206,8 +206,8 @@ func moveData(drives map[string]int64, volumes map[string]int64) {
 
 }
 
-func doSomething(label string) {
-	fmt.Printf("task for %s\n", label)
+func doSomething(label string, dir string) {
+	fmt.Printf("task for vol: %s and dir: %s\n ", label, dir)
 }
 
 func mountDrive(driveName string, directory string) bool {
