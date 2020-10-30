@@ -22,6 +22,6 @@ func waitPartition2(filePath string) {
 		if ok() {
 			break
 		}
-		time.Sleep(500 * time.Microsecond)
+		time.Sleep(1 * time.Second)
 	}
 }
