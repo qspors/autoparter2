@@ -368,7 +368,7 @@ func main() {
 		os.Exit(1)
 	}
 	FileSystemType := os.Args[1]
-	os.Exit(0)
+
 	state := State{start: "start", stop: "stop"}
 	services := []string{"lxcfs", "cron"}
 	driveMap := getDrives()
