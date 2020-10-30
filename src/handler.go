@@ -227,7 +227,6 @@ func doMountingActions(label string, dir string, filesystem string) {
 	unmountDrive(fullLabel)
 	moveData(tempDir, dir)
 	mountDrive(fullLabel, dir)
-	//mountDrive(fullLabel, dir)
 	//fstabConfig(fullLabel, dir)
 	//removeTempDir(tempDir)
 
