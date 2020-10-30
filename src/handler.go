@@ -360,8 +360,8 @@ func main() {
 	}
 	fileSystems := []string{"xfs", "ext3", "ext4"}
 	if _, found := Find(fileSystems, os.Args[1]); !found {
-		log.Println("Filesystem not correct")
-		log.Println("Correct is")
+		log.Println("Filesystem is not correct")
+		log.Println("Correct is:")
 		for _, item := range fileSystems {
 			log.Printf("> %s\n", item)
 		}
