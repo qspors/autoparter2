@@ -227,8 +227,9 @@ func doMountingActions(label string, dir string, filesystem string) {
 	unmountDrive(fullLabel)
 	moveData(tempDir, dir)
 	mountDrive(fullLabel, dir)
+	removeTempDir(old)
+	fstabConfig(fullLabel, dir)
 
-	//fstabConfig(fullLabel, dir)
 	//removeTempDir(tempDir)
 
 }
@@ -288,14 +289,18 @@ func copyData(src string, dst string) {
 	}
 }
 func moveData(src string, dst string) {
-
 	log.Printf("Move data, source: %s, destination: %s\n", src, dst)
 	if _, err1 := exec.Command("mv", src, dst).Output(); err1 != nil {
 		log.Println(err1)
 	}
 }
+func removeTempDir(directory string) {
+	log.Printf("Remove old, dir: %s\n", directory)
+	if _, err1 := exec.Command("rm -Rf", directory).Output(); err1 != nil {
+		log.Println(err1)
+	}
+}
 func fstabConfig(label string, directory string) {}
-func removeTempDir(directory string)             {}
 func getSuffix(label string) string {
 	log.Printf("Get suffix for: %s\n", label)
 	var childName string
@@ -316,20 +321,6 @@ func getSuffix(label string) string {
 		}
 	}
 	return childName
-}
-func waitPartition(filePath string) {
-	for {
-		ok := func() bool {
-			if _, err := os.Stat(filePath); os.IsNotExist(err) {
-				return false
-			}
-			return true
-		}
-		if ok() {
-			break
-		}
-		time.Sleep(500 * time.Millisecond)
-	}
 }
 func main() {
 	state := State{start: "start", stop: "stop"}
