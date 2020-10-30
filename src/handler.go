@@ -44,8 +44,7 @@ type SuffixDevice struct {
 }
 
 const (
-	xfs  string = "xfs"
-	ext3 string = "ext3"
+	xfs string = "xfs"
 )
 
 func UnmarshalSuffix(data []byte) (Suffixes, error) {
@@ -229,7 +228,7 @@ func doMountingActions(label string, dir string, filesystem string) {
 	moveData(tempDir, dir)
 	mountDrive(fullLabel, dir)
 	removeTempDir(old)
-	fstabConfig(fullLabel, dir)
+	fstabConfig(fullLabel, dir, filesystem)
 
 	//removeTempDir(tempDir)
 
@@ -301,9 +300,19 @@ func removeTempDir(directory string) {
 		log.Println(err1)
 	}
 }
-func fstabConfig(label string, directory string) {
+func fstabConfig(label string, directory string, fsType string) {
 	uuid := getUUID(label)
 	log.Printf("UUID for: %s is: %s for directory: %s\n", label, uuid, directory)
+	file, err := os.OpenFile("/etc/fstab", os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer file.Close()
+	uuidString := fmt.Sprintf("\nUUID=%s %s %s defaults 0 0", uuid, directory, fsType)
+	if _, err := file.WriteString(uuidString); err != nil {
+		log.Println(err)
+	}
+
 }
 func getSuffix(label string) string {
 	log.Printf("Get suffix for: %s\n", label)
