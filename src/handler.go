@@ -218,7 +218,7 @@ func doMountingActions(label string, dir string, filesystem string) {
 	log.Printf("Start doMountingActions for: %s\n", label)
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
-	old := fmt.Sprintf("/%s.old", dir)
+	old := fmt.Sprintf("%s.old", dir)
 	createTempDir(tempDir)
 	mountDrive(fullLabel, tempDir)
 	// Data move
