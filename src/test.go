@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os/exec"
+	"strings"
 )
 
 func main() {
@@ -16,5 +18,8 @@ func getUUID(label string) {
 		log.Println(err)
 	}
 	newOut := string(out)
-	fmt.Println(newOut)
+	scanner := bufio.NewScanner(strings.NewReader(newOut))
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
 }
