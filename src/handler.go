@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
@@ -300,7 +301,10 @@ func removeTempDir(directory string) {
 		log.Println(err1)
 	}
 }
-func fstabConfig(label string, directory string) {}
+func fstabConfig(label string, directory string) {
+	uuid := getUUID(label)
+	log.Printf("UUID for: %s is: %s for directory: %s\n", label, uuid, directory)
+}
 func getSuffix(label string) string {
 	log.Printf("Get suffix for: %s\n", label)
 	var childName string
@@ -321,6 +325,21 @@ func getSuffix(label string) string {
 		}
 	}
 	return childName
+}
+func getUUID(label string) string {
+	var uuid string
+	out, err := exec.Command("blkid", label, "--output", "export").Output()
+	if err != nil {
+		log.Println(err)
+	}
+	scanner := bufio.NewScanner(strings.NewReader(string(out)))
+	for scanner.Scan() {
+		UUID := strings.Split(scanner.Text(), "=")
+		if UUID[0] == "UUID" {
+			uuid = UUID[1]
+		}
+	}
+	return uuid
 }
 func main() {
 	state := State{start: "start", stop: "stop"}
