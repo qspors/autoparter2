@@ -345,9 +345,29 @@ func getUUID(label string) string {
 	}
 	return uuid
 }
+func Find(slice []string, val string) (int, bool) {
+	for i, item := range slice {
+		if item == val {
+			return i, true
+		}
+	}
+	return -1, false
+}
 func main() {
+	if len(os.Args) != 3 {
+		log.Println("Filesystem is not specified or to many args")
+		os.Exit(1)
+	}
+	fileSystems := []string{"xfs", "ext3", "ext4"}
+	if _, found := Find(fileSystems, os.Args[1]); !found {
+		log.Println("Filesystem not correct")
+		log.Println("Correct is")
+		for _, item := range fileSystems {
+			log.Printf("> %s\n", item)
+		}
+		os.Exit(1)
+	}
 	FileSystemType := os.Args[1]
-	log.Println("Size of Args: ", len(FileSystemType))
 	log.Printf("File system type: %s\n", FileSystemType)
 	os.Exit(0)
 	state := State{start: "start", stop: "stop"}
