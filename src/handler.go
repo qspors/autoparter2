@@ -147,7 +147,7 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 	return driveMap
 }
 func dirsExist(volInfo map[string]int64) bool {
-	for key, _ := range volInfo {
+	for key := range volInfo {
 		if _, err := os.Stat(key); os.IsNotExist(err) {
 			log.Println("Create dir: ", key)
 			_, err := exec.Command("mkdir", "-p", key).Output()
