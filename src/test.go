@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
@@ -21,5 +22,6 @@ func waitPartition2(filePath string) {
 		if ok() {
 			break
 		}
+		time.Sleep(100 * time.Microsecond)
 	}
 }
