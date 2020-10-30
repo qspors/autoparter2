@@ -218,10 +218,15 @@ func doMountingActions(label string, dir string, filesystem string) {
 	log.Printf("Start doMountingActions for: %s\n", label)
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
+	old := fmt.Sprintf("/%s.old", dir)
 	createTempDir(tempDir)
 	mountDrive(fullLabel, tempDir)
+	// Data move
 	copyData(dir, tempDir)
-	//unmountDrive(fullLabel)
+	moveData(dir, old)
+	unmountDrive(fullLabel)
+	moveData(tempDir, dir)
+	mountDrive(fullLabel, dir)
 	//mountDrive(fullLabel, dir)
 	//fstabConfig(fullLabel, dir)
 	//removeTempDir(tempDir)
@@ -269,10 +274,23 @@ func mountDrive(label string, directory string) {
 		log.Println(err)
 	}
 }
-func unmountDrive(label string) {}
+func unmountDrive(label string) {
+	log.Printf("Umount drive: %s\n", label)
+	_, err := exec.Command("umount", label).Output()
+	if err != nil {
+		log.Println(err)
+	}
+}
 func copyData(src string, dst string) {
 	log.Printf("Copy data, source: %s, destination: %s\n", src, dst)
 	if _, err1 := exec.Command("rsync", "-raX", src, dst).Output(); err1 != nil {
+		log.Println(err1)
+	}
+}
+func moveData(src string, dst string) {
+
+	log.Printf("Move data, source: %s, destination: %s\n", src, dst)
+	if _, err1 := exec.Command("mv", src, dst).Output(); err1 != nil {
 		log.Println(err1)
 	}
 }
