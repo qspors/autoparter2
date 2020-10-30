@@ -354,7 +354,7 @@ func Find(slice []string, val string) (int, bool) {
 	return -1, false
 }
 func main() {
-	if len(os.Args) != 3 {
+	if len(os.Args) != 2 {
 		log.Println("Filesystem is not specified or to many args")
 		os.Exit(1)
 	}
