@@ -49,9 +49,7 @@ func UnmarshalSuffix(data []byte) (Suffixes, error) {
 }
 
 const (
-	xfs  string = "xfs"
-	ext4 string = "ext4"
-	ext3 string = "ext3"
+	xfs string = "xfs"
 )
 
 func UnmarshalDrives(data []byte) (Drives, error) {
