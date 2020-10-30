@@ -215,11 +215,11 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 
 // Do Actions
 func doMountingActions(label string, dir string, filesystem string) {
-	//tempDir := fmt.Sprintf("/temp%s", label)
-	//fullLabel := createDrive(label, filesystem)
-	//createTempDir(tempDir)
-	//mountDrive(fullLabel, tempDir)
-	//copyData(dir, tempDir)
+	tempDir := fmt.Sprintf("/temp%s", label)
+	fullLabel := createDrive(label, filesystem)
+	createTempDir(tempDir)
+	mountDrive(fullLabel, tempDir)
+	copyData(dir, tempDir)
 	//unmountDrive(fullLabel)
 	//mountDrive(fullLabel, dir)
 	//fstabConfig(fullLabel, dir)
@@ -259,8 +259,14 @@ func mountDrive(label string, directory string) {
 		log.Println(err)
 	}
 }
-func unmountDrive(label string)                  {}
-func copyData(dir string, tempDir string)        {}
+func unmountDrive(label string) {}
+func copyData(src string, dst string) {
+	fmt.Printf("Source: %s\n", src)
+	fmt.Printf("Dest: %s\n", dst)
+	//if _, err1 := exec.Command("rsync", "-raX", src, dst).Output(); err1 != nil {
+	//	log.Println(err1)
+	//}
+}
 func fstabConfig(label string, directory string) {}
 func removeTempDir(directory string)             {}
 func getSuffix(label string) string {
@@ -296,7 +302,7 @@ func waitPartition(filePath string) {
 		if ok() {
 			break
 		}
-		time.Sleep(800 * time.Second)
+		time.Sleep(500 * time.Millisecond)
 	}
 }
 func main() {
