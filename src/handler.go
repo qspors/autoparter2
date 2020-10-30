@@ -209,7 +209,6 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
-				fmt.Printf("Action for drive: %s and dir: %s\n", driveLabel, dirName)
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 			}
@@ -221,10 +220,8 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 func doMountingActions(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
-	fmt.Printf("Action for tempDir: %s and Fulllabel: %s\n", tempDir, fullLabel)
 	createTempDir(tempDir)
 	mountDrive(fullLabel, tempDir)
-	fmt.Println("################################################################")
 	//copyData(dir, tempDir)
 	//unmountDrive(fullLabel)
 	//mountDrive(fullLabel, dir)
@@ -238,39 +235,32 @@ func createDrive(label string, filesystem string) string {
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
 	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
-		fmt.Println("err1")
-		fmt.Println(err1)
+		log.Println(err1)
 	}
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
-		fmt.Println("err2")
-		fmt.Println(err2)
+		log.Println(err2)
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	time.Sleep(10 * time.Second)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
-		fmt.Println("err3")
-		fmt.Println(err3)
+		log.Println(err3)
 	}
-	fmt.Printf("Drive created %s\n", fullPartPath)
 	return fullPartPath
 }
 func createTempDir(tempDir string) {
 	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
 		err := os.MkdirAll(tempDir, 0700)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
-	fmt.Printf("Tempdir: %s created\n", tempDir)
 }
 func mountDrive(label string, directory string) {
-	_, err1 := exec.Command("mount", label, directory).Output()
-	if err1 != nil {
-		fmt.Println(err1)
-		fmt.Println(err1)
+	_, err := exec.Command("mount", label, directory).Output()
+	if err != nil {
+		log.Println(err)
 	}
-	fmt.Printf("Drive: %s is mounted to: %s\n", label, directory)
 }
 func unmountDrive(label string)                  {}
 func copyData(dir string, tempDir string)        {}
@@ -281,11 +271,11 @@ func getSuffix(label string) string {
 	fullLabel := fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	r, err := UnmarshalSuffix(out)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for _, item := range r.Blockdevices {
 
@@ -298,7 +288,6 @@ func getSuffix(label string) string {
 }
 func main() {
 	state := State{start: "start", stop: "stop"}
-
 	services := []string{"lxcfs", "cron"}
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
