@@ -13,7 +13,6 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type State struct {
@@ -42,16 +41,16 @@ type SuffixDevice struct {
 	Children   []SuffixDevice `json:"children,omitempty"`
 }
 
+const (
+	xfs  string = "xfs"
+	ext3 string = "ext3"
+)
+
 func UnmarshalSuffix(data []byte) (Suffixes, error) {
 	var r Suffixes
 	err := json.Unmarshal(data, &r)
 	return r, err
 }
-
-const (
-	xfs string = "xfs"
-)
-
 func UnmarshalDrives(data []byte) (Drives, error) {
 	var r Drives
 	err := json.Unmarshal(data, &r)
@@ -205,7 +204,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
-				fmt.Printf("Action for drive: %s, dir: %s\n", driveLabel, dirName)
+				//fmt.Printf("Action for drive: %s, dir: %s\n", driveLabel, dirName)
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 			}
@@ -239,7 +238,7 @@ func createDrive(label string, filesystem string) string {
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
-	time.Sleep(10 * time.Second)
+	waitPartition(fullPartPath)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
 	}
@@ -282,6 +281,19 @@ func getSuffix(label string) string {
 		}
 	}
 	return childName
+}
+func waitPartition(filePath string) {
+	for {
+		ok := func() bool {
+			if _, err := os.Stat(filePath); os.IsNotExist(err) {
+				return false
+			}
+			return true
+		}
+		if ok() {
+			break
+		}
+	}
 }
 func main() {
 	state := State{start: "start", stop: "stop"}
