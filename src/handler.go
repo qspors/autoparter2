@@ -234,41 +234,34 @@ func doMountingActions(label string, dir string, filesystem string) {
 func createDrive(label string, filesystem string) string {
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
-	fmt.Printf("Create new drive for: %s\n", labelPath)
 	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
 		fmt.Println(err1)
 	}
-	fmt.Printf("Make new partition for: %s\n", labelPath)
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		fmt.Println(err2)
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
-	time.Sleep(3 * time.Second)
-	fmt.Printf("Format using command: %s new partition for: %s\n", formatCommand, fullPartPath)
+	time.Sleep(10 * time.Second)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		fmt.Println(err3)
 	}
-	fmt.Printf("Partition: %s create completed!!!\n", fullPartPath)
 	return fullPartPath
 }
 func createTempDir(tempDir string) {
 	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
-		fmt.Println("Create temp directory: ", tempDir)
 		err := os.MkdirAll(tempDir, 0700)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 	}
 }
 func mountDrive(label string, directory string) {
-	fmt.Printf("Mount partition: %s to dir: %s\n", label, directory)
-	out, err1 := exec.Command("mount", label, directory).Output()
+	_, err1 := exec.Command("mount", label, directory).Output()
 	if err1 != nil {
 		fmt.Println(err1)
 	}
-	fmt.Println(string(out))
-	fmt.Println("Mount completed!!!")
+
 }
 func unmountDrive(label string)                  {}
 func copyData(dir string, tempDir string)        {}
