@@ -21,7 +21,9 @@ func getUUID(label string) {
 	newOut := string(out)
 	scanner := bufio.NewScanner(strings.NewReader(newOut))
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
-		fmt.Println("########")
+		UUID := strings.Split(scanner.Text(), "=")
+		if UUID[0] == "UUID" {
+			fmt.Println(UUID[1])
+		}
 	}
 }
