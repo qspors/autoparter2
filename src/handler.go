@@ -244,7 +244,8 @@ func createDrive(label string, filesystem string) string {
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
-	waitPartition(fullPartPath)
+	//waitPartition(fullPartPath)
+	time.Sleep(5 * time.Second)
 	log.Printf("format for fullpath: %s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
