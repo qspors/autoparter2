@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type State struct {
@@ -286,13 +287,16 @@ func waitPartition(filePath string) {
 	for {
 		ok := func() bool {
 			if _, err := os.Stat(filePath); os.IsNotExist(err) {
+				fmt.Println("Not exit")
 				return false
 			}
+			fmt.Println("Is exit")
 			return true
 		}
 		if ok() {
 			break
 		}
+		time.Sleep(800 * time.Second)
 	}
 }
 func main() {
