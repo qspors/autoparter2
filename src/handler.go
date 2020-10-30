@@ -271,11 +271,11 @@ func mountDrive(label string, directory string) {
 }
 func unmountDrive(label string) {}
 func copyData(src string, dst string) {
-	fmt.Printf("Source: %s\n", src)
-	fmt.Printf("Dest: %s\n", dst)
-	//if _, err1 := exec.Command("rsync", "-raX", src, dst).Output(); err1 != nil {
-	//	log.Println(err1)
-	//}
+	log.Printf("Source: %s\n", src)
+	log.Printf("Dest: %s\n", dst)
+	if _, err1 := exec.Command("rsync", "-raX", src, dst).Output(); err1 != nil {
+		log.Println(err1)
+	}
 }
 func fstabConfig(label string, directory string) {}
 func removeTempDir(directory string)             {}
