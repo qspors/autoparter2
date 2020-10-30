@@ -17,6 +17,7 @@ func getUUID(label string) {
 	if err != nil {
 		log.Println(err)
 	}
+
 	newOut := string(out)
 	scanner := bufio.NewScanner(strings.NewReader(newOut))
 	for scanner.Scan() {
