@@ -283,7 +283,7 @@ func unmountDrive(label string) {
 }
 func copyData(src string, dst string) {
 	log.Printf("Copy data, source: %s, destination: %s\n", src, dst)
-	if _, err1 := exec.Command("rsync", "-raX", src, dst).Output(); err1 != nil {
+	if _, err1 := exec.Command("rsync", "-raX", src+"/", dst+"/").Output(); err1 != nil {
 		log.Println(err1)
 	}
 }
