@@ -234,7 +234,6 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 // Action functions
 func createDrive(label string, filesystem string) string {
-	log.Println("#########################################")
 	log.Printf("Start createDrive for: %s\n", label)
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
@@ -248,13 +247,11 @@ func createDrive(label string, filesystem string) string {
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
-	//waitPartition(fullPartPath)
 	time.Sleep(5 * time.Second)
 	log.Printf("format for fullpath: %s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
 	}
-	log.Println("#########################################")
 	return fullPartPath
 }
 func createTempDir(tempDir string) {
@@ -300,13 +297,19 @@ func removeTempDir(directory string) {
 }
 func fstabConfig(label string, directory string, fsType string) {
 	uuid := getUUID(label)
+	var uuidString string
 	log.Printf("UUID for: %s is: %s for directory: %s\n", label, uuid, directory)
 	file, err := os.OpenFile("/etc/fstab", os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
 	}
 	defer file.Close()
-	uuidString := fmt.Sprintf("\nUUID=%s %s %s defaults 0 0", uuid, directory, fsType)
+	if directory == "/tmp" {
+		uuidString = fmt.Sprintf("\nUUID=%s %s %s nodev,nosuid,noexec 0 0", uuid, directory, fsType)
+	} else {
+		uuidString = fmt.Sprintf("\nUUID=%s %s %s defaults 0 0", uuid, directory, fsType)
+	}
+
 	if _, err := file.WriteString(uuidString); err != nil {
 		log.Println(err)
 	}
