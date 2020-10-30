@@ -354,7 +354,6 @@ func Find(slice []string, val string) (int, bool) {
 	return -1, false
 }
 func main() {
-	log.Println("Size: ", len(os.Args))
 	if len(os.Args) != 2 {
 		log.Println("Filesystem is not specified or to many args")
 		os.Exit(1)
@@ -369,7 +368,6 @@ func main() {
 		os.Exit(1)
 	}
 	FileSystemType := os.Args[1]
-	log.Printf("File system type: %s\n", FileSystemType)
 	os.Exit(0)
 	state := State{start: "start", stop: "stop"}
 	services := []string{"lxcfs", "cron"}
