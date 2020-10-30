@@ -215,6 +215,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 
 // Do Actions
 func doMountingActions(label string, dir string, filesystem string) {
+	log.Printf("Start doMountingActions for: %s\n", label)
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
 	createTempDir(tempDir)
@@ -229,23 +230,30 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 // Action functions
 func createDrive(label string, filesystem string) string {
+	log.Println("#########################################")
+	log.Printf("Start createDrive for: %s\n", label)
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
+	log.Printf("mktable for drive: %s\n", labelPath)
 	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
 		log.Println(err1)
 	}
+	log.Printf("mkpart for labelpath: %s\n", labelPath)
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		log.Println(err2)
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	waitPartition(fullPartPath)
+	log.Printf("format for fullpath: %s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
 	}
+	log.Println("#########################################")
 	return fullPartPath
 }
 func createTempDir(tempDir string) {
+	log.Printf("Create tempdir : %s\n", tempDir)
 	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
 		err := os.MkdirAll(tempDir, 0700)
 		if err != nil {
@@ -254,6 +262,7 @@ func createTempDir(tempDir string) {
 	}
 }
 func mountDrive(label string, directory string) {
+	log.Printf("Mount drive: %s to dir: %s\n", label, directory)
 	_, err := exec.Command("mount", label, directory).Output()
 	if err != nil {
 		log.Println(err)
@@ -270,6 +279,7 @@ func copyData(src string, dst string) {
 func fstabConfig(label string, directory string) {}
 func removeTempDir(directory string)             {}
 func getSuffix(label string) string {
+	log.Printf("Get suffix for: %s\n", label)
 	var childName string
 	fullLabel := fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
@@ -293,10 +303,8 @@ func waitPartition(filePath string) {
 	for {
 		ok := func() bool {
 			if _, err := os.Stat(filePath); os.IsNotExist(err) {
-				fmt.Println("Not exit")
 				return false
 			}
-			fmt.Println("Is exit")
 			return true
 		}
 		if ok() {
