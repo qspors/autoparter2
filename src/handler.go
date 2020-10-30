@@ -262,7 +262,7 @@ func createTempDir(tempDir string) {
 			fmt.Println(err)
 		}
 	}
-	fmt.Printf("Tempdir: %s crated\n", tempDir)
+	fmt.Printf("Tempdir: %s created\n", tempDir)
 }
 func mountDrive(label string, directory string) {
 	_, err1 := exec.Command("mount", label, directory).Output()
