@@ -230,8 +230,6 @@ func doMountingActions(label string, dir string, filesystem string) {
 	removeTempDir(old)
 	fstabConfig(fullLabel, dir, filesystem)
 
-	//removeTempDir(tempDir)
-
 }
 
 // Action functions
@@ -296,7 +294,7 @@ func moveData(src string, dst string) {
 }
 func removeTempDir(directory string) {
 	log.Printf("Remove old, dir: %s\n", directory)
-	if _, err1 := exec.Command("rm -Rf", directory).Output(); err1 != nil {
+	if _, err1 := exec.Command("/bin/rm -Rf", directory).Output(); err1 != nil {
 		log.Println(err1)
 	}
 }
