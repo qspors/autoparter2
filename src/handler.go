@@ -207,7 +207,6 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 				log.Println("___________________")
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
-				log.Println("####################################################")
 			}
 		}
 	}
