@@ -43,10 +43,6 @@ type SuffixDevice struct {
 	Children   []SuffixDevice `json:"children,omitempty"`
 }
 
-const (
-	xfs string = "xfs"
-)
-
 func UnmarshalSuffix(data []byte) (Suffixes, error) {
 	var r Suffixes
 	err := json.Unmarshal(data, &r)
@@ -206,16 +202,14 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
 				log.Printf("Action for drive: %s, dir: %s\n", driveLabel, dirName)
-				log.Printf("####################################################")
+				log.Println("####################################################")
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
-				log.Printf("####################################################")
+				log.Println("####################################################")
 			}
 		}
 	}
 }
-
-// Do Actions
 func doMountingActions(label string, dir string, filesystem string) {
 	log.Printf("Start doMountingActions for: %s\n", label)
 	tempDir := fmt.Sprintf("/temp%s", label)
@@ -233,8 +227,6 @@ func doMountingActions(label string, dir string, filesystem string) {
 	fstabConfig(fullLabel, dir, filesystem)
 
 }
-
-// Action functions
 func createDrive(label string, filesystem string) string {
 	log.Printf("Start createDrive for: %s\n", label)
 	labelPath := fmt.Sprintf("/dev/%s", label)
@@ -354,11 +346,15 @@ func getUUID(label string) string {
 	return uuid
 }
 func main() {
+	FileSystemType := os.Args[1]
+	log.Println("Size of Args: ", len(FileSystemType))
+	log.Printf("File system type: %s\n", FileSystemType)
+	os.Exit(0)
 	state := State{start: "start", stop: "stop"}
 	services := []string{"lxcfs", "cron"}
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsExist(volInfo)
 	serviceStatus(state.start, services)
-	compareVolumeAndDrives(driveMap, volInfo, xfs)
+	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
 }
