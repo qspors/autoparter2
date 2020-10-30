@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	waitPartition2("/dev/xvdc1")
+	waitPartition2("/dev/xvdf1")
 }
 func waitPartition2(filePath string) {
 	for {
