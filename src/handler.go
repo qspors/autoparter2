@@ -62,6 +62,7 @@ func getDrives() map[string]int64 {
 	for idx, itm := range r.BlockDevices {
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
+		case fmt.Sprintf("md%d", idx):
 		default:
 			if len(itm.Children) == 0 {
 
