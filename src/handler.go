@@ -181,11 +181,10 @@ func serviceStatus(command string, services []string) {
 	}
 }
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
-
+	log.Println("#################### ! ! ! >  H E L L O  < ! ! ! ####################")
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
-				log.Println("#################### H_E_L_L_O #####################")
 				log.Printf("Processing drive: %s, dir: %s , drivesize: %d, filesystem: %s\n", driveLabel, dirName, driveSize, filesystem)
 				volumeProcessing(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
