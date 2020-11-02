@@ -317,7 +317,7 @@ func getSuffix(label string) string {
 	var childName string
 	fullLabel := fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
-	log.Printf("RAW OUT: %+v", out)
+	log.Printf("RAW OUT: %+v", string(out))
 	if err != nil {
 		log.Println(err)
 	}
