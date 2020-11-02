@@ -33,13 +33,8 @@ type Suffixes struct {
 	Blockdevices []SuffixDevice `json:"blockdevices"`
 }
 type SuffixDevice struct {
-	Name string `json:"name"`
-	//MajMin     string         `json:"maj:min"`
-	//Rm         string         `json:"rm"`
-	Size string `json:"size"`
-	//Ro         string         `json:"ro"`
-	//Type       string         `json:"type"`
-	//Mountpoint interface{}    `json:"mountpoint"`
+	Name     string         `json:"name"`
+	Size     string         `json:"size"`
 	Children []SuffixDevice `json:"children,omitempty"`
 }
 
@@ -54,7 +49,6 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 	return r, err
 }
 func getDrives() map[string]int64 {
-	log.Println("Get drives")
 	driveMap := make(map[string]int64)
 	out, err := exec.Command("lsblk", "-J", "-a", "-b").Output()
 	if err != nil {
@@ -69,28 +63,7 @@ func getDrives() map[string]int64 {
 		case fmt.Sprintf("loop%d", idx):
 		default:
 			if len(itm.Children) == 0 {
-				//if strings.Contains(itm.Size, "G") {
-				//
-				//	splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
-				//		return strings.ContainsRune("G", r)
-				//	})[0]
-				//	size, err := strconv.Atoi(splitString)
-				//	if err != nil {
-				//		log.Fatal(err)
-				//	}
-				//	driveMap[itm.Name] = int64(size)
-				//
-				//} else if strings.Contains(itm.Size, "T") {
-				//	splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
-				//		return strings.ContainsRune("T", r)
-				//	})[0]
-				//	size, err := strconv.ParseFloat(splitString, 64)
-				//	newSize := size * 1000
-				//	if err != nil {
-				//		log.Fatal(err)
-				//	}
-				//	driveMap[itm.Name] = int64(newSize)
-				//}
+
 				itemSize, err := strconv.Atoi(itm.Size)
 				if err != nil {
 					log.Fatal(err)
@@ -207,20 +180,17 @@ func serviceStatus(command string, services []string) {
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
-			log.Printf("DRIVESIZE: %d, DIRSIZE: %d\n", driveSize, dirSize)
 			if driveSize == dirSize {
-
 				log.Println("####################################################")
-				log.Printf("Action for drive: %s, dir: %s\n", driveLabel, dirName)
-				log.Println("___________________")
+				log.Printf("Processing drive: %s, dir: %s , drivesize: %d\n", driveLabel, dirName, driveSize)
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
+				log.Println("Processing completed")
 			}
 		}
 	}
 }
 func doMountingActions(label string, dir string, filesystem string) {
-	log.Printf("Start doMountingActions for: %s\n", label)
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
 	old := fmt.Sprintf("%s.old", dir)
@@ -237,30 +207,25 @@ func doMountingActions(label string, dir string, filesystem string) {
 
 }
 func createDrive(label string, filesystem string) string {
-	log.Printf("Start createDrive for: %s\n", label)
 	labelPath := fmt.Sprintf("/dev/%s", label)
 	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
-	log.Printf("mktable for drive: %s\n", labelPath)
 	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
 		log.Println(err1)
 	}
-	log.Printf("mkpart for labelpath: %s\n", labelPath)
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		log.Println(err2)
 	}
 	time.Sleep(1 * time.Second)
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
-	log.Printf("Suffix is: %s", driveSuffix)
 	time.Sleep(3 * time.Second)
-	log.Printf("format for fullpath: %s\n", fullPartPath)
+
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
 	}
 	return fullPartPath
 }
 func createTempDir(tempDir string) {
-	log.Printf("Create tempdir : %s\n", tempDir)
 	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
 		err := os.MkdirAll(tempDir, 0700)
 		if err != nil {
@@ -269,33 +234,28 @@ func createTempDir(tempDir string) {
 	}
 }
 func mountDrive(label string, directory string) {
-	log.Printf("Mount drive: %s to dir: %s\n", label, directory)
 	_, err := exec.Command("mount", label, directory).Output()
 	if err != nil {
 		log.Println(err)
 	}
 }
 func unmountDrive(label string) {
-	log.Printf("Umount drive: %s\n", label)
 	_, err := exec.Command("umount", label).Output()
 	if err != nil {
 		log.Println(err)
 	}
 }
 func copyData(src string, dst string) {
-	log.Printf("Copy data, source: %s, destination: %s\n", src, dst)
 	if _, err1 := exec.Command("rsync", "-raX", src+"/", dst+"/").Output(); err1 != nil {
 		log.Println(err1)
 	}
 }
 func moveData(src string, dst string) {
-	log.Printf("Move data, source: %s, destination: %s\n", src, dst)
 	if _, err1 := exec.Command("mv", src, dst).Output(); err1 != nil {
 		log.Println(err1)
 	}
 }
 func removeOldDir(directory string) {
-	log.Printf("Remove old, dir: %s\n", directory)
 	if _, err1 := exec.Command("rm", "-Rf", directory).Output(); err1 != nil {
 		log.Println(err1)
 	}
@@ -303,7 +263,6 @@ func removeOldDir(directory string) {
 func fstabConfig(label string, directory string, fsType string) {
 	uuid := getUUID(label)
 	var uuidString string
-	log.Printf("UUID for: %s is: %s for directory: %s\n", label, uuid, directory)
 	file, err := os.OpenFile("/etc/fstab", os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
@@ -321,7 +280,6 @@ func fstabConfig(label string, directory string, fsType string) {
 
 }
 func getSuffix(label string) string {
-	log.Printf("Get suffix for: %s\n", label)
 	var childName string
 	fullLabel := fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
@@ -381,13 +339,13 @@ func getFs() string {
 	return os.Args[1]
 }
 func main() {
-	//FileSystemType := getFs()
-	FileSystemType := "xfs"
+	FileSystemType := getFs()
 	state := State{start: "start", stop: "stop"}
 	services := []string{"lxcfs", "cron"}
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsExist(volInfo)
-	serviceStatus(state.start, services)
+	serviceStatus(state.stop, services)
 	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
+	serviceStatus(state.start, services)
 }
