@@ -45,4 +45,4 @@ RHT8         `ami-029ba835ddd43c34f`
 Based on Golang 1.15
 Specifically designed for AWS EC2 instances
 
-### Yuriy Yurov.
+Yuriy Yurov.
