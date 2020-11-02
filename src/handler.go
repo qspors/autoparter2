@@ -222,8 +222,14 @@ func createDrive(label string, filesystem string) string {
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	time.Sleep(3 * time.Second)
+	overrideFlag := func(fl string) string {
+		if fl == "xfs" {
+			return "-f"
+		}
+		return "-F"
+	}
 
-	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
+	if _, err3 := exec.Command(formatCommand, overrideFlag(filesystem), fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
 	}
 	return fullPartPath
@@ -342,7 +348,7 @@ func prepareService(services string) []string {
 }
 func main() {
 	fsPtr := flag.String("f", "xfs", "File system type")
-	svcPtr := flag.String("s", "lxcfs", "List of services for stop/start, enter inside quotes with commas: \"ServiceName1,ServiceName2\"")
+	svcPtr := flag.String("s", "lxcfs", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
 	flag.Parse()
 	state := State{start: "start", stop: "stop"}
 	FileSystemType := getFs(*fsPtr)
