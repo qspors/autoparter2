@@ -291,7 +291,6 @@ func getSuffix(label string) string {
 		log.Println(err)
 	}
 	for _, item := range r.Blockdevices {
-		log.Printf("ITEM: %s", item)
 		for _, name := range item.Children {
 			childName = name.Name
 
