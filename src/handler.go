@@ -241,10 +241,11 @@ func createDrive(label string, filesystem string) string {
 	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
 		log.Println(err2)
 	}
+	time.Sleep(1 * time.Second)
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	log.Printf("Suffix is: %s", driveSuffix)
-	time.Sleep(5 * time.Second)
+	time.Sleep(4 * time.Second)
 	log.Printf("format for fullpath: %s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
