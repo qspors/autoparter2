@@ -349,6 +349,7 @@ func main() {
 	fsPtr := flag.String("f", "xfs", "File system type")
 	svcPtr := flag.String("s", "lxcfs", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
 	flag.Parse()
+
 	state := State{start: "start", stop: "stop"}
 	FileSystemType := getFs(*fsPtr)
 	services := prepareService(*svcPtr)
