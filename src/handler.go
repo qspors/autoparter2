@@ -207,7 +207,6 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 				log.Println("___________________")
 				doMountingActions(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
-				os.Exit(0)
 			}
 		}
 	}
@@ -245,7 +244,7 @@ func createDrive(label string, filesystem string) string {
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	log.Printf("Suffix is: %s", driveSuffix)
-	time.Sleep(4 * time.Second)
+	time.Sleep(3 * time.Second)
 	log.Printf("format for fullpath: %s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
