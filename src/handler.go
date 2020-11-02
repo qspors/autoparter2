@@ -178,6 +178,7 @@ func serviceStatus(command string, services []string) {
 	}
 }
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
+
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
@@ -340,7 +341,7 @@ func getFs() string {
 func main() {
 	FileSystemType := getFs()
 	state := State{start: "start", stop: "stop"}
-	services := []string{"lxcfs", "cron"}
+	services := []string{"lxcfs"}
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirsExist(volInfo)
