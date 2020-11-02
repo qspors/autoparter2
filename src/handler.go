@@ -290,7 +290,7 @@ func fstabConfig(label string, directory string, fsType string) {
 func getSuffix(label string) string {
 	var childName string
 	fullLabel := fmt.Sprintf("/dev/%s", label)
-	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
+	out, err := exec.Command("lsblk", "-J", fullLabel).Output()
 	if err != nil {
 		log.Println(err)
 	}
