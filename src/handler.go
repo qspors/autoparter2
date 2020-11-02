@@ -69,28 +69,34 @@ func getDrives() map[string]int64 {
 		case fmt.Sprintf("loop%d", idx):
 		default:
 			if len(itm.Children) == 0 {
-				if strings.Contains(itm.Size, "G") {
-
-					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
-						return strings.ContainsRune("G", r)
-					})[0]
-					size, err := strconv.Atoi(splitString)
-					if err != nil {
-						log.Fatal(err)
-					}
-					driveMap[itm.Name] = int64(size)
-
-				} else if strings.Contains(itm.Size, "T") {
-					splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
-						return strings.ContainsRune("T", r)
-					})[0]
-					size, err := strconv.ParseFloat(splitString, 64)
-					newSize := size * 1000
-					if err != nil {
-						log.Fatal(err)
-					}
-					driveMap[itm.Name] = int64(newSize)
+				//if strings.Contains(itm.Size, "G") {
+				//
+				//	splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
+				//		return strings.ContainsRune("G", r)
+				//	})[0]
+				//	size, err := strconv.Atoi(splitString)
+				//	if err != nil {
+				//		log.Fatal(err)
+				//	}
+				//	driveMap[itm.Name] = int64(size)
+				//
+				//} else if strings.Contains(itm.Size, "T") {
+				//	splitString := strings.FieldsFunc(itm.Size, func(r rune) bool {
+				//		return strings.ContainsRune("T", r)
+				//	})[0]
+				//	size, err := strconv.ParseFloat(splitString, 64)
+				//	newSize := size * 1000
+				//	if err != nil {
+				//		log.Fatal(err)
+				//	}
+				//	driveMap[itm.Name] = int64(newSize)
+				//}
+				itemSize, err := strconv.Atoi(itm.Size)
+				if err != nil {
+					log.Fatal(err)
 				}
+				itemSize = itemSize / 1024 / 1024 / 1024
+				driveMap[itm.Name] = int64(itemSize)
 			}
 		}
 	}
