@@ -54,6 +54,7 @@ func UnmarshalDrives(data []byte) (Drives, error) {
 	return r, err
 }
 func getDrives() map[string]int64 {
+	log.Println("Get drives")
 	driveMap := make(map[string]int64)
 	out, err := exec.Command("lsblk", "-J", "-a", "-b").Output()
 	if err != nil {
