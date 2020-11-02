@@ -38,12 +38,12 @@ type SuffixDevice struct {
 	Children []SuffixDevice `json:"children,omitempty"`
 }
 
-func UnmarshalSuffix(data []byte) (Suffixes, error) {
+func unmarshalSuffix(data []byte) (Suffixes, error) {
 	var r Suffixes
 	err := json.Unmarshal(data, &r)
 	return r, err
 }
-func UnmarshalDrives(data []byte) (Drives, error) {
+func unmarshalDrives(data []byte) (Drives, error) {
 	var r Drives
 	err := json.Unmarshal(data, &r)
 	return r, err
@@ -54,7 +54,7 @@ func getDrives() map[string]int64 {
 	if err != nil {
 		log.Fatal(err)
 	}
-	r, err := UnmarshalDrives(out)
+	r, err := unmarshalDrives(out)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -122,7 +122,7 @@ func getVolumeInfo(instanceId string) map[string]int64 {
 	}
 	return driveMap
 }
-func dirsExist(volInfo map[string]int64) bool {
+func dirIsExist(volInfo map[string]int64) bool {
 	for key := range volInfo {
 		if _, err := os.Stat(key); os.IsNotExist(err) {
 			if _, err := exec.Command("mkdir", "-p", key).Output(); err != nil {
@@ -184,14 +184,14 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 			if driveSize == dirSize {
 				log.Println("####################################################")
 				log.Printf("Processing drive: %s, dir: %s , drivesize: %d\n", driveLabel, dirName, driveSize)
-				doMountingActions(driveLabel, dirName, filesystem)
+				volumeProcessing(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 				log.Println("Processing completed")
 			}
 		}
 	}
 }
-func doMountingActions(label string, dir string, filesystem string) {
+func volumeProcessing(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
 	old := fmt.Sprintf("%s.old", dir)
@@ -287,7 +287,7 @@ func getSuffix(label string) string {
 	if err != nil {
 		log.Println(err)
 	}
-	r, err := UnmarshalSuffix(out)
+	r, err := unmarshalSuffix(out)
 	if err != nil {
 		log.Println(err)
 	}
@@ -314,7 +314,7 @@ func getUUID(label string) string {
 	}
 	return uuid
 }
-func Find(slice []string, val string) (int, bool) {
+func findInSlice(slice []string, val string) (int, bool) {
 	for i, item := range slice {
 		if item == val {
 			return i, true
@@ -328,7 +328,7 @@ func getFs() string {
 		os.Exit(1)
 	}
 	fileSystems := []string{"xfs", "ext3", "ext4"}
-	if _, found := Find(fileSystems, os.Args[1]); !found {
+	if _, found := findInSlice(fileSystems, os.Args[1]); !found {
 		log.Println("Filesystem is not correct")
 		log.Println("Correct is:")
 		for _, item := range fileSystems {
@@ -344,7 +344,7 @@ func main() {
 	services := []string{"lxcfs"}
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
-	dirsExist(volInfo)
+	dirIsExist(volInfo)
 	serviceStatus(state.stop, services)
 	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
 	serviceStatus(state.start, services)
