@@ -145,37 +145,35 @@ func serviceStatus(command string, services []string) {
 		if err != nil {
 			if _, ok := err.(*exec.ExitError); ok {
 			} else {
-				fmt.Printf("failed to run systemctl: %v", err)
+				log.Printf("failed to run systemctl: %+v\n", err)
 				os.Exit(1)
 			}
 		}
 
 		if strings.EqualFold(outString, "active") && command == "stop" {
-			fmt.Printf("Stop sertvice: %s\n", item)
 			invokeStop := exec.Command("systemctl", command, item)
 			_, err2 := invokeStop.CombinedOutput()
 			if err2 != nil {
 				if exitErr2, ok := err2.(*exec.ExitError); ok {
-					fmt.Printf("systemctl finished with non-zero: %v\n", exitErr2)
+					log.Printf("systemctl finished with non-zero: %+v\n", exitErr2)
 				} else {
-					fmt.Printf("failed to run systemctl: %v", err2)
+					log.Printf("failed to run systemctl: %+v\n", err2)
 					os.Exit(1)
 				}
 			}
 		}
 		if strings.EqualFold(outString, "inactive") && command == "start" {
-			fmt.Printf("Start sertvice: %s\n", item)
 			invokeStart := exec.Command("systemctl", command, item)
 			_, err3 := invokeStart.CombinedOutput()
 			if err3 != nil {
 				if exitErr3, ok := err3.(*exec.ExitError); ok {
 					if exitErr3.ExitCode() == 5 {
-						log.Printf("No such service in system: %+v", item)
+						log.Printf("No such service in system: %+v\n", item)
+					} else {
+						log.Printf("Error type: %+v\n", exitErr3.ExitCode())
 					}
-
-					log.Printf("ERR: %+v\n", err3)
 				} else {
-					fmt.Printf("failed to run systemctl: %v", err3)
+					log.Printf("failed to run systemctl: %+v\n", err3)
 					os.Exit(1)
 				}
 			}
@@ -187,7 +185,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
-				log.Println("####################################################")
+				log.Println("#################### H_E_L_L_O #####################")
 				log.Printf("Processing drive: %s, dir: %s , drivesize: %d\n", driveLabel, dirName, driveSize)
 				volumeProcessing(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
@@ -202,7 +200,6 @@ func volumeProcessing(label string, dir string, filesystem string) {
 	old := fmt.Sprintf("%s.old", dir)
 	createTempDir(tempDir)
 	mountDrive(fullLabel, tempDir)
-	// Data move
 	copyData(dir, tempDir)
 	moveData(dir, old)
 	unmountDrive(fullLabel)
@@ -353,7 +350,7 @@ func main() {
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirIsExist(volInfo)
-	//serviceStatus(state.stop, services)
+	serviceStatus(state.stop, services)
 	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
 	serviceStatus(state.start, services)
 }
