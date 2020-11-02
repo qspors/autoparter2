@@ -208,7 +208,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
 			log.Printf("DRIVESIZE: %d, DIRSIZE: %d\n", driveSize, dirSize)
-			if driveSize/1204/1024/1024 == dirSize {
+			if driveSize == dirSize {
 
 				log.Println("####################################################")
 				log.Printf("Action for drive: %s, dir: %s\n", driveLabel, dirName)
