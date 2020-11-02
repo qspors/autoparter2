@@ -61,7 +61,6 @@ func getDrives() map[string]int64 {
 	for idx, itm := range r.BlockDevices {
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
-		case fmt.Sprintf("md%d", idx):
 		default:
 			if len(itm.Children) == 0 {
 
@@ -178,7 +177,7 @@ func serviceStatus(command string, services []string) {
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
 	log.Println("#################### ! ! ! >  H E L L O  < ! ! ! ####################")
 	for driveLabel, driveSize := range drives {
-		log.Printf("Action for drive: %s\n", driveLabel)
+		log.Printf("Processing for drive: %s\n", driveLabel)
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
 				log.Printf("Processing drive: %s, dir: %s , drivesize: %d, filesystem: %s\n", driveLabel, dirName, driveSize, filesystem)
