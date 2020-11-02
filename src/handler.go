@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -26,7 +27,7 @@ type Drives struct {
 }
 type BlockDevice struct {
 	Name     string        `json:"name"`
-	Size     *int64        `json:"size"`
+	Size     string        `json:"size"`
 	Children []BlockDevice `json:"children,omitempty"`
 }
 type Suffixes struct {
@@ -50,23 +51,27 @@ func unmarshalDrives(data []byte) (Drives, error) {
 }
 func getDrives() map[string]int64 {
 	driveMap := make(map[string]int64)
-	out, err := exec.Command("lsblk", "-J", "-a", "-b").Output()
+	out, err := exec.Command("lsblk", "-J", "-b").Output()
 	if err != nil {
 		log.Fatal(err)
 	}
 	r, err := unmarshalDrives(out)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	for idx, itm := range r.BlockDevices {
-		log.Printf("Item is: %s\n", itm)
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
 		case fmt.Sprintf("md%d", idx):
 		default:
 			if len(itm.Children) == 0 {
-				log.Printf("Item size %d for item: %s\n", *itm.Size, itm)
-				driveMap[itm.Name] = *itm.Size / 1024 / 1024 / 1024
+
+				itemSize, err := strconv.Atoi(itm.Size)
+				if err != nil {
+					log.Fatal(err)
+				}
+				itemSize = itemSize / 1024 / 1024 / 1024
+				driveMap[itm.Name] = int64(itemSize)
 			}
 		}
 	}
@@ -182,7 +187,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
 				log.Printf("Processing drive: %s, dir: %s , drivesize: %d, filesystem: %s\n", driveLabel, dirName, driveSize, filesystem)
-				//volumeProcessing(driveLabel, dirName, filesystem)
+				volumeProcessing(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 				log.Println("Processing completed")
 			}
@@ -344,7 +349,6 @@ func main() {
 	fsPtr := flag.String("f", "xfs", "File system type")
 	svcPtr := flag.String("s", "lxcfs", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
 	flag.Parse()
-
 	state := State{start: "start", stop: "stop"}
 	FileSystemType := getFs(*fsPtr)
 	services := prepareService(*svcPtr)
