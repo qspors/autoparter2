@@ -186,7 +186,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 		for dirName, dirSize := range volumes {
 			if driveSize == dirSize {
 				log.Println("#################### H_E_L_L_O #####################")
-				log.Printf("Processing drive: %s, dir: %s , drivesize: %d\n", driveLabel, dirName, driveSize)
+				log.Printf("Processing drive: %s, dir: %s , drivesize: %d, filesystem: %s\n", driveLabel, dirName, driveSize, filesystem)
 				volumeProcessing(driveLabel, dirName, filesystem)
 				delete(volumes, dirName)
 				log.Println("Processing completed")
@@ -228,7 +228,6 @@ func createDrive(label string, filesystem string) string {
 		}
 		return "-F"
 	}
-
 	if _, err3 := exec.Command(formatCommand, overrideFlag(filesystem), fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
 	}
