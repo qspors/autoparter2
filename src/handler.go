@@ -242,6 +242,7 @@ func createDrive(label string, filesystem string) string {
 	}
 	driveSuffix := getSuffix(label)
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
+	log.Printf("Suffix is: %s", driveSuffix)
 	time.Sleep(5 * time.Second)
 	log.Printf("format for fullpath: %s\n", fullPartPath)
 	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
@@ -323,7 +324,7 @@ func getSuffix(label string) string {
 		log.Println(err)
 	}
 	for _, item := range r.Blockdevices {
-
+		log.Printf("ITEM: %s", item)
 		for _, name := range item.Children {
 			childName = name.Name
 
