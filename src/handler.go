@@ -26,7 +26,7 @@ type Drives struct {
 }
 type BlockDevice struct {
 	Name     string        `json:"name"`
-	Size     *int64        `json:"size"`
+	Size     json.Number   `json:"size"`
 	Children []BlockDevice `json:"children,omitempty"`
 }
 type Suffixes struct {
@@ -63,8 +63,11 @@ func getDrives() map[string]int64 {
 		case fmt.Sprintf("loop%d", idx):
 		default:
 			if len(itm.Children) == 0 {
-
-				driveMap[itm.Name] = *itm.Size / 1024 / 1024 / 1024
+				size, err := itm.Size.Int64()
+				if err != nil {
+					log.Println(err)
+				}
+				driveMap[itm.Name] = size / 1024 / 1024 / 1024
 			}
 		}
 	}
