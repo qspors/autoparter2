@@ -56,7 +56,7 @@ func getDrives() map[string]int64 {
 	}
 	r, err := unmarshalDrives(out)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for idx, itm := range r.BlockDevices {
 		log.Printf("Item is: %s\n", itm)
