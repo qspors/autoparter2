@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -322,13 +323,9 @@ func findInSlice(slice []string, val string) (int, bool) {
 	}
 	return -1, false
 }
-func getFs() string {
-	if len(os.Args) != 2 {
-		log.Println("Filesystem is not specified or to many args")
-		os.Exit(1)
-	}
+func getFs(fs string) string {
 	fileSystems := []string{"xfs", "ext3", "ext4"}
-	if _, found := findInSlice(fileSystems, os.Args[1]); !found {
+	if _, found := findInSlice(fileSystems, fs); !found {
 		log.Println("Filesystem is not correct")
 		log.Println("Correct is:")
 		for _, item := range fileSystems {
@@ -336,12 +333,19 @@ func getFs() string {
 		}
 		os.Exit(1)
 	}
-	return os.Args[1]
+	return fs
+}
+func prepareService(services string) []string {
+	stringSlice := strings.Split(services, ",")
+	return stringSlice
 }
 func main() {
-	FileSystemType := getFs()
+	fsPtr := flag.String("-f", "xfs", "File system type, default: xfs")
+	svcPtr := flag.String("-s", "lxcfs", "List of services for stop/start, enter inside quotes with commas: \"ServiceName1,ServiceName2\", default: lxcfs ")
+	flag.Parse()
 	state := State{start: "start", stop: "stop"}
-	services := []string{"lxcfs"}
+	FileSystemType := getFs(*fsPtr)
+	services := prepareService(*svcPtr)
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirIsExist(volInfo)
