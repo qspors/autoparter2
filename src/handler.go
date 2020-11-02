@@ -33,14 +33,14 @@ type Suffixes struct {
 	Blockdevices []SuffixDevice `json:"blockdevices"`
 }
 type SuffixDevice struct {
-	Name       string         `json:"name"`
-	MajMin     string         `json:"maj:min"`
-	Rm         string         `json:"rm"`
-	Size       string         `json:"size"`
-	Ro         string         `json:"ro"`
-	Type       string         `json:"type"`
-	Mountpoint interface{}    `json:"mountpoint"`
-	Children   []SuffixDevice `json:"children,omitempty"`
+	Name string `json:"name"`
+	//MajMin     string         `json:"maj:min"`
+	//Rm         string         `json:"rm"`
+	Size string `json:"size"`
+	//Ro         string         `json:"ro"`
+	//Type       string         `json:"type"`
+	//Mountpoint interface{}    `json:"mountpoint"`
+	Children []SuffixDevice `json:"children,omitempty"`
 }
 
 func UnmarshalSuffix(data []byte) (Suffixes, error) {
@@ -317,6 +317,7 @@ func getSuffix(label string) string {
 	var childName string
 	fullLabel := fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
+	log.Printf("RAW OUT: %+v", out)
 	if err != nil {
 		log.Println(err)
 	}
@@ -324,6 +325,7 @@ func getSuffix(label string) string {
 	if err != nil {
 		log.Println(err)
 	}
+	log.Printf("Unmarshaled OUT: %+v", r)
 	for _, item := range r.Blockdevices {
 		log.Printf("ITEM: %s", item)
 		for _, name := range item.Children {
