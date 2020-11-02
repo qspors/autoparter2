@@ -316,6 +316,7 @@ func getSuffix(label string) string {
 	log.Printf("Get suffix for: %s\n", label)
 	var childName string
 	fullLabel := fmt.Sprintf("/dev/%s", label)
+	log.Printf("Full label: %s", fullLabel)
 	out, err := exec.Command("lsblk", "-J", "-a", fullLabel).Output()
 	log.Printf("RAW OUT: %+v", string(out))
 	if err != nil {
