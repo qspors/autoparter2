@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -27,7 +26,7 @@ type Drives struct {
 }
 type BlockDevice struct {
 	Name     string        `json:"name"`
-	Size     string        `json:"size"`
+	Size     *int64        `json:"size"`
 	Children []BlockDevice `json:"children,omitempty"`
 }
 type Suffixes struct {
@@ -60,18 +59,14 @@ func getDrives() map[string]int64 {
 		log.Fatal(err)
 	}
 	for idx, itm := range r.BlockDevices {
+		log.Printf("Item is: %s\n", itm)
 		switch itm.Name {
 		case fmt.Sprintf("loop%d", idx):
 		case fmt.Sprintf("md%d", idx):
 		default:
 			if len(itm.Children) == 0 {
 
-				itemSize, err := strconv.Atoi(itm.Size)
-				if err != nil {
-					log.Fatal(err)
-				}
-				itemSize = itemSize / 1024 / 1024 / 1024
-				driveMap[itm.Name] = int64(itemSize)
+				driveMap[itm.Name] = *itm.Size / 1024 / 1024 / 1024
 			}
 		}
 	}
