@@ -223,7 +223,7 @@ func createDrive(label string, filesystem string) string {
 	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
 	time.Sleep(3 * time.Second)
 
-	if _, err3 := exec.Command(formatCommand, "-f", fullPartPath).Output(); err3 != nil {
+	if _, err3 := exec.Command(formatCommand, fullPartPath).Output(); err3 != nil {
 		log.Println(err3)
 	}
 	return fullPartPath
