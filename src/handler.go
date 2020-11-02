@@ -169,7 +169,8 @@ func serviceStatus(command string, services []string) {
 			_, err3 := invokeStart.CombinedOutput()
 			if err3 != nil {
 				if exitErr3, ok := err3.(*exec.ExitError); ok {
-					fmt.Printf("systemctl finished with non-zero: %v\n", exitErr3)
+					log.Printf("systemctl finished with non-zero: %v\n", exitErr3)
+					log.Printf("ERR: %+v\n", err3)
 				} else {
 					fmt.Printf("failed to run systemctl: %v", err3)
 					os.Exit(1)
