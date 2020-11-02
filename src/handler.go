@@ -200,6 +200,7 @@ func serviceStatus(command string, services []string) {
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
 	for driveLabel, driveSize := range drives {
 		for dirName, dirSize := range volumes {
+			log.Printf("DRIVESIZE: %s, DIRSIZE: %s", driveSize, dirSize)
 			if driveSize == dirSize {
 
 				log.Println("####################################################")
