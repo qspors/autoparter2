@@ -353,7 +353,7 @@ func main() {
 	driveMap := getDrives()
 	volInfo := getVolumeInfo(getInstanceId())
 	dirIsExist(volInfo)
-	serviceStatus(state.stop, services)
+	//serviceStatus(state.stop, services)
 	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
 	serviceStatus(state.start, services)
 }
