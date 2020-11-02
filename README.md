@@ -9,7 +9,20 @@ Value=/directory/path
 Also add UUID params to ```/etc/fstab```.
 I you need to stop particular service which can interfere mount/umount process, please use flag `-s` with particallar service name:
 Defaults: FS type `xfs`, if you want to change use option `-f ext4`.
-
+## Minimum requirements for EC2 Instance profile:
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "ec2:DescribeVolumes",
+            "Resource": "*"
+        }
+    ]
+}
+```
 ### Tested on:
 Ubuntu 18.04 `ami-0f2b111fdc1647918`
 
