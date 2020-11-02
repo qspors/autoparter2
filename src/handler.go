@@ -340,8 +340,8 @@ func prepareService(services string) []string {
 	return stringSlice
 }
 func main() {
-	fsPtr := flag.String("-f", "xfs", "File system type, default: xfs")
-	svcPtr := flag.String("-s", "lxcfs", "List of services for stop/start, enter inside quotes with commas: \"ServiceName1,ServiceName2\", default: lxcfs ")
+	fsPtr := flag.String("-f", "xfs", "File system type")
+	svcPtr := flag.String("-s", "lxcfs", "List of services for stop/start, enter inside quotes with commas: \"ServiceName1,ServiceName2\"")
 	flag.Parse()
 	state := State{start: "start", stop: "stop"}
 	FileSystemType := getFs(*fsPtr)
