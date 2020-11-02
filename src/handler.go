@@ -186,7 +186,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 				delete(volumes, dirName)
 				log.Println("Processing completed")
 			}
-
+			continue
 		}
 
 	}
