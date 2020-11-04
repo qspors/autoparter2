@@ -33,8 +33,7 @@ type Suffixes struct {
 	Blockdevices []SuffixDevice `json:"blockdevices"`
 }
 type SuffixDevice struct {
-	Name string `json:"name"`
-	//Size     string         `json:"size"`
+	Name     string         `json:"name"`
 	Children []SuffixDevice `json:"children,omitempty"`
 }
 
