@@ -17,6 +17,7 @@ import (
 	"time"
 )
 
+//LVM
 type State struct {
 	stop  string
 	start string
