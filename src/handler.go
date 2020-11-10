@@ -176,8 +176,8 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		}
 	}
 	for mPoint, size := range volumes {
-		fmt.Printf(mPoint)
-		fmt.Printf(string(size))
+		fmt.Println(mPoint)
+		fmt.Println(strconv.FormatInt(size, 10))
 	}
 }
 
