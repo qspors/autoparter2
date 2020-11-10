@@ -200,6 +200,8 @@ func lvcCreate(mPoint string, size int64) {
 	points := strings.Split(mPoint, "/")
 	point := fmt.Sprintf("mountpoint_%s", points[len(points)-1])
 	newSize := fmt.Sprintf("%dG", strconv.FormatInt(size, 10))
+	fmt.Println(point)
+	fmt.Println(newSize)
 	_, err := exec.Command("lvcreate", "-n", point, "-L", newSize, "group1").Output()
 	if err != nil {
 		log.Fatal(err)
