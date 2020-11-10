@@ -4,14 +4,12 @@ import (
 	"bufio"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ssm"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"strconv"
@@ -40,7 +38,6 @@ type SuffixDevice struct {
 	Children []SuffixDevice `json:"children,omitempty"`
 }
 
-////////////////////////
 func getVolumeInfo2() map[string]int64 {
 	driveMap := make(map[string]int64)
 	ses, err := session.NewSession(&aws.Config{
@@ -75,37 +72,7 @@ func getVolumeInfo2() map[string]int64 {
 	}
 	return driveMap
 }
-func getVolumeInfo3() map[string]int64 {
-	driveMap := make(map[string]int64)
-	ses, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1")},
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-	svc := ssm.New(ses)
-	parameter := "/dev/snakesapp/driveinfo"
-	input := &ssm.GetParameterInput{
-		Name: aws.String(parameter),
-	}
-	response, err := svc.GetParameter(input)
-	if err != nil {
-		log.Println(err)
-	}
-	notEncodedParam := *response.Parameter.Value
-	decoded, err := base64.StdEncoding.DecodeString(notEncodedParam)
-	if err != nil {
-		log.Println(err)
-	}
-	scanner := bufio.NewScanner(strings.NewReader(string(decoded)))
-	scanner.Split(bufio.ScanLines)
-	for scanner.Scan() {
-		fmt.Println(scanner.Text())
-	}
-	return driveMap
-}
 
-////////////////////////
 func unmarshalSuffix(data []byte) (Suffixes, error) {
 	var r Suffixes
 	err := json.Unmarshal(data, &r)
@@ -136,53 +103,6 @@ func getDrives() map[string]int64 {
 					log.Println(err)
 				}
 				driveMap[itm.Name] = size / 1024 / 1024 / 1024
-			}
-		}
-	}
-	return driveMap
-}
-func getInstanceId() string {
-	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return string(body)
-}
-func getVolumeInfo(instanceId string) map[string]int64 {
-	driveMap := make(map[string]int64)
-	ses, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1")},
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-	svc := ec2.New(ses)
-	input := &ec2.DescribeVolumesInput{
-		Filters: []*ec2.Filter{{
-			Name: aws.String("attachment.instance-id"),
-			Values: []*string{
-				aws.String(instanceId),
-			},
-		},
-		},
-	}
-	response, err := svc.DescribeVolumes(input)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, vol := range response.Volumes {
-		for _, tags := range vol.Tags {
-			if *tags.Key == "mount" {
-				if *tags.Value != "none" {
-					driveMap[*tags.Value] = *vol.Size
-				}
-
 			}
 		}
 	}
@@ -247,19 +167,8 @@ func serviceStatus(command string, services []string) {
 }
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
 	log.Println("#################### ! ! ! >  H E L L O  < ! ! ! ####################")
-	for driveLabel, driveSize := range drives {
-		log.Printf("Processing for drive: %s\n", driveLabel)
-		for dirName, dirSize := range volumes {
-			if driveSize == dirSize {
-				log.Printf("Processing drive: %s, dir: %s , drivesize: %d, filesystem: %s\n", driveLabel, dirName, driveSize, filesystem)
-				volumeProcessing(driveLabel, dirName, filesystem)
-				delete(volumes, dirName)
-				log.Println("Processing completed")
-				break
-			}
-		}
-
-	}
+	fmt.Println(drives)
+	fmt.Println(volumes)
 }
 func volumeProcessing(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
@@ -413,18 +322,16 @@ func prepareService(services string) []string {
 	return stringSlice
 }
 func main() {
-	//fsPtr := flag.String("f", "xfs", "File system type")
-	//svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
-	//flag.Parse()
-	//state := State{start: "start", stop: "stop"}
-	//FileSystemType := getFs(*fsPtr)
-	//services := prepareService(*svcPtr)
-	//driveMap := getDrives()
-	//volInfo := getVolumeInfo(getInstanceId())
-	//dirIsExist(volInfo)
-	//serviceStatus(state.stop, services)
-	//compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
-	//serviceStatus(state.start, services)
-	getVolumeInfo3()
-
+	fsPtr := flag.String("f", "xfs", "File system type")
+	svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
+	flag.Parse()
+	state := State{start: "start", stop: "stop"}
+	FileSystemType := getFs(*fsPtr)
+	services := prepareService(*svcPtr)
+	driveMap := getDrives()
+	volInfo := getVolumeInfo2()
+	dirIsExist(volInfo)
+	serviceStatus(state.stop, services)
+	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
+	serviceStatus(state.start, services)
 }
