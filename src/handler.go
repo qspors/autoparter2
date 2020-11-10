@@ -62,8 +62,7 @@ func getVolumeInfo2() map[string]int64 {
 	if err != nil {
 		log.Println(err)
 	}
-	for key, val := range string(decoded) {
-		fmt.Println(key)
+	for _, val := range decoded {
 		fmt.Println(val)
 	}
 	return driveMap
