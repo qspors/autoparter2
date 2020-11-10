@@ -181,8 +181,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		createFS(point)
 		createTempDir(endPointDirName)
 		fullLabel := fmt.Sprintf("/dev/mapper/group1-%s", point)
-		fmt.Println(fullLabel)
-		fmt.Println(endPointDirName)
+		mountDrive(fullLabel, endPointDirName)
 	}
 }
 
