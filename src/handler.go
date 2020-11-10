@@ -175,27 +175,29 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 			pvGroupCreate(drv)
 		}
 	}
+	for mPoint, size := range volumes {
+		fmt.Printf(mPoint)
+		fmt.Printf(string(size))
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
 func pvCreate(label string) {
 	label = fmt.Sprintf("/dev/%s", label)
-	out, err := exec.Command("pvcreate", label).Output()
+	_, err := exec.Command("pvcreate", label).Output()
 	if err != nil {
-		log.Printf("ERROR IS: %s", err)
+		log.Fatal(err)
 
 	}
-	fmt.Println(string(out))
-
 }
 func pvGroupCreate(label string) {
 	label = fmt.Sprintf("/dev/%s", label)
-	out, err := exec.Command("vgcreate", "group1", label).Output()
+	_, err := exec.Command("vgcreate", "group1", label).Output()
 	if err != nil {
-		log.Printf("ERROR IS: %s", err)
+		log.Fatal(err)
 	}
-	fmt.Printf(string(out))
 }
+func lvcCreate() {}
 
 ////////////////////////////////////////////////////////////////////////
 func volumeProcessing(label string, dir string, filesystem string) {
