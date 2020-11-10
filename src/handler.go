@@ -180,11 +180,12 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 ////////////////////////////////////////////////////////////////////////
 func pvCreate(label string) {
 	label = fmt.Sprintf("/dev/%s", label)
-	_, err := exec.Command("pvcreate", label).Output()
+	out, err := exec.Command("pvcreate", label).Output()
 	if err != nil {
 		log.Fatalf("ERROR IS: %s", err)
 
 	}
+	fmt.Println(string(out))
 
 }
 func pvGroupCreate(label string) {
