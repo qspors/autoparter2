@@ -171,7 +171,11 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, f
 	for _, val := range volumes {
 		resultSize = resultSize + val
 	}
-	fmt.Println(drives)
+	for drv, size := range drives {
+		if size == resultSize {
+			fmt.Println(drv)
+		}
+	}
 }
 func volumeProcessing(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
