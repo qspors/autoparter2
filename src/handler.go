@@ -172,6 +172,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 	for drv, size := range drives {
 		if size == resultSize {
 			pvCreate(drv)
+			pvGroupCreate(drv)
 		}
 	}
 }
@@ -179,7 +180,15 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 ////////////////////////////////////////////////////////////////////////
 func pvCreate(label string) {
 	label = fmt.Sprintf("/dev/%s", label)
-	out, err := exec.Command("pvcreate", label).Output()
+	_, err := exec.Command("pvcreate", label).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+func pvGroupCreate(label string) {
+	label = fmt.Sprintf("/dev/%s", label)
+	out, err := exec.Command("vgcreate", "group1", label).Output()
 	if err != nil {
 		log.Fatal(err)
 	}
