@@ -176,8 +176,12 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		}
 	}
 	for mPoint, size := range volumes {
-		mPoint := lvcCreate(mPoint, size-1)
-		createFS(mPoint)
+		endPointDirName := strings.Split(mPoint, "/")[len(strings.Split(mPoint, "/"))-1]
+		fmt.Println(endPointDirName)
+		point := lvcCreate(mPoint, size-1)
+		createFS(point)
+		//createTempDir(mPoint)
+
 	}
 }
 
