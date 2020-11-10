@@ -183,6 +183,7 @@ func pvCreate(label string) {
 	_, err := exec.Command("pvcreate", label).Output()
 	if err != nil {
 		log.Fatalf("ERROR IS: %s", err)
+
 	}
 
 }
