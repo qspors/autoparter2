@@ -62,8 +62,9 @@ func getVolumeInfo2() map[string]int64 {
 	if err != nil {
 		log.Println(err)
 	}
-	for _, val := range decoded {
-		fmt.Println(string(val))
+	scanner := bufio.NewScanner(strings.NewReader(string(decoded)))
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
 	}
 	return driveMap
 }
