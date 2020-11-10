@@ -182,7 +182,7 @@ func pvCreate(label string) {
 	label = fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("pvcreate", label).Output()
 	if err != nil {
-		log.Fatalf("ERROR IS: %s", err)
+		log.Printf("ERROR IS: %s", err)
 
 	}
 	fmt.Println(string(out))
@@ -194,7 +194,7 @@ func pvGroupCreate(label string) {
 	if err != nil {
 		log.Fatalf("ERROR IS: %s", err)
 	}
-	fmt.Println(string(out))
+	fmt.Printf(string(out))
 }
 
 ////////////////////////////////////////////////////////////////////////
