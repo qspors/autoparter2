@@ -182,7 +182,7 @@ func pvCreate(label string) {
 	label = fmt.Sprintf("/dev/%s", label)
 	_, err := exec.Command("pvcreate", label).Output()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ERROR IS: %s", err)
 	}
 
 }
