@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
@@ -56,7 +57,12 @@ func getVolumeInfo2() map[string]int64 {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(*response.Parameter.Value)
+	notEncodedParam := *response.Parameter.Value
+	decoded, err := base64.StdEncoding.DecodeString(notEncodedParam)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(decoded)
 	return driveMap
 }
 
