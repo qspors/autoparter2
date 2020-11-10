@@ -176,7 +176,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		}
 	}
 	for mPoint, size := range volumes {
-		lvcCreate(mPoint, size)
+		lvcCreate(mPoint, size-1)
 	}
 }
 
