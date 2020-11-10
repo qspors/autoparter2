@@ -176,8 +176,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		}
 	}
 	for mPoint, size := range volumes {
-		fmt.Println(mPoint)
-		fmt.Println(strconv.FormatInt(size, 10))
+		lvcCreate(mPoint, size)
 	}
 }
 
@@ -197,7 +196,15 @@ func pvGroupCreate(label string) {
 		log.Fatal(err)
 	}
 }
-func lvcCreate() {}
+func lvcCreate(mPoint string, size int64) {
+	points := strings.Split(mPoint, "/")
+	point := points[len(points)-1]
+	fmt.Printf("Point Name: %s, size: %d", point, size)
+	//_, err := exec.Command("lvcreate ", "-n").Output()
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+}
 
 ////////////////////////////////////////////////////////////////////////
 func volumeProcessing(label string, dir string, filesystem string) {
