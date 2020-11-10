@@ -180,7 +180,9 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		point := lvcCreate(mPoint, size-1)
 		createFS(point)
 		createTempDir(endPointDirName)
-
+		fullLabel := fmt.Sprintf("/dev/mapper/group1-%s", point)
+		fmt.Println(fullLabel)
+		fmt.Println(endPointDirName)
 	}
 }
 
@@ -204,8 +206,6 @@ func lvcCreate(mPoint string, size int64) string {
 	points := strings.Split(mPoint, "/")
 	point := fmt.Sprintf("mountpoint_%s", points[len(points)-1])
 	newSize := fmt.Sprintf("%sG", strconv.FormatInt(size, 10))
-	fmt.Println(point)
-	fmt.Println(newSize)
 	_, err := exec.Command("lvcreate", "-n", point, "-L", newSize, "group1").Output()
 	if err != nil {
 		log.Fatal(err)
