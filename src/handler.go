@@ -3,11 +3,11 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ssm"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -38,6 +38,29 @@ type SuffixDevice struct {
 	Children []SuffixDevice `json:"children,omitempty"`
 }
 
+////////////////////////
+func getVolumeInfo2() map[string]int64 {
+	driveMap := make(map[string]int64)
+	ses, err := session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1")},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	svc := ssm.New(ses)
+	parameter := "/dev/snakesapp/driveinfo"
+	input := &ssm.GetParametersByPathInput{
+		Path: aws.String(parameter),
+	}
+	response, err := svc.GetParametersByPath(input)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(response)
+	return driveMap
+}
+
+////////////////////////
 func unmarshalSuffix(data []byte) (Suffixes, error) {
 	var r Suffixes
 	err := json.Unmarshal(data, &r)
@@ -345,16 +368,17 @@ func prepareService(services string) []string {
 	return stringSlice
 }
 func main() {
-	fsPtr := flag.String("f", "xfs", "File system type")
-	svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
-	flag.Parse()
-	state := State{start: "start", stop: "stop"}
-	FileSystemType := getFs(*fsPtr)
-	services := prepareService(*svcPtr)
-	driveMap := getDrives()
-	volInfo := getVolumeInfo(getInstanceId())
-	dirIsExist(volInfo)
-	serviceStatus(state.stop, services)
-	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
-	serviceStatus(state.start, services)
+	//fsPtr := flag.String("f", "xfs", "File system type")
+	//svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
+	//flag.Parse()
+	//state := State{start: "start", stop: "stop"}
+	//FileSystemType := getFs(*fsPtr)
+	//services := prepareService(*svcPtr)
+	//driveMap := getDrives()
+	//volInfo := getVolumeInfo(getInstanceId())
+	//dirIsExist(volInfo)
+	//serviceStatus(state.stop, services)
+	//compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
+	//serviceStatus(state.start, services)
+	getVolumeInfo2()
 }
