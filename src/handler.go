@@ -178,7 +178,7 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 
 ////////////////////////////////////////////////////////////////////////
 func pvCreate(label string) {
-	fmt.Println("AAA")
+	label = fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("pvcreate", label).Output()
 	if err != nil {
 		log.Fatal(err)
