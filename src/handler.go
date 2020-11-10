@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/base64"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -165,7 +164,7 @@ func serviceStatus(command string, services []string) {
 		}
 	}
 }
-func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
+func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 	var resultSize int64
 	for _, val := range volumes {
 		resultSize = resultSize + val
@@ -339,16 +338,16 @@ func prepareService(services string) []string {
 	return stringSlice
 }
 func main() {
-	fsPtr := flag.String("f", "xfs", "File system type")
-	svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
-	flag.Parse()
-	state := State{start: "start", stop: "stop"}
-	FileSystemType := getFs(*fsPtr)
-	services := prepareService(*svcPtr)
+	//fsPtr := flag.String("f", "xfs", "File system type")
+	//svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
+	//flag.Parse()
+	//state := State{start: "start", stop: "stop"}
+	//FileSystemType := getFs(*fsPtr)
+	//services := prepareService(*svcPtr)
 	driveMap := getDrives()
 	volInfo := getVolumeInfo2()
 	dirIsExist(volInfo)
-	serviceStatus(state.stop, services)
-	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
-	serviceStatus(state.start, services)
+	//serviceStatus(state.stop, services)
+	compareVolumeAndDrives(driveMap, volInfo)
+	//serviceStatus(state.start, services)
 }
