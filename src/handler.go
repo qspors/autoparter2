@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -66,8 +67,9 @@ func getVolumeInfo2() map[string]int64 {
 	for scanner.Scan() {
 		tmp := scanner.Text()
 		split := strings.Split(tmp, "=")
-		fmt.Println(split[0])
-		fmt.Println(split[1])
+		if tmpSize, err := strconv.ParseInt(split[1], 10, 64); err != nil {
+			driveMap[split[0]] = tmpSize
+		}
 	}
 	return driveMap
 }
@@ -392,5 +394,6 @@ func main() {
 	//serviceStatus(state.stop, services)
 	//compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
 	//serviceStatus(state.start, services)
-	getVolumeInfo2()
+	asd := getVolumeInfo2()
+	fmt.Println(asd)
 }
