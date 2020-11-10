@@ -64,7 +64,10 @@ func getVolumeInfo2() map[string]int64 {
 	}
 	scanner := bufio.NewScanner(strings.NewReader(string(decoded)))
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		tmp := scanner.Text()
+		split := strings.Split(tmp, "=")
+		fmt.Println(split[0])
+		fmt.Println(split[1])
 	}
 	return driveMap
 }
