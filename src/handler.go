@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -13,10 +14,8 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	"time"
 )
 
-//LVM
 type State struct {
 	stop  string
 	start string
@@ -29,15 +28,77 @@ type BlockDevice struct {
 	Size     json.Number   `json:"size"`
 	Children []BlockDevice `json:"children,omitempty"`
 }
-type Suffixes struct {
-	Blockdevices []SuffixDevice `json:"blockdevices"`
-}
-type SuffixDevice struct {
-	Name     string         `json:"name"`
-	Children []SuffixDevice `json:"children,omitempty"`
-}
 
-func getVolumeInfo2() map[string]int64 {
+func pvCreate(label string) {
+	label = fmt.Sprintf("/dev/%s", label)
+	_, err := exec.Command("pvcreate", label).Output()
+	if err != nil {
+		log.Fatal(err)
+
+	}
+}
+func pvGroupCreate(label string) {
+	label = fmt.Sprintf("/dev/%s", label)
+	_, err := exec.Command("vgcreate", "group1", label).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+func getFs(fs string) string {
+	fileSystems := []string{"xfs", "ext3", "ext4"}
+	if _, found := findInSlice(fileSystems, fs); !found {
+		log.Println("Filesystem is not correct")
+		log.Println("Correct is:")
+		for _, item := range fileSystems {
+			log.Printf("> %s\n", item)
+		}
+		os.Exit(1)
+	}
+	return fs
+}
+func findInSlice(slice []string, val string) (int, bool) {
+	for i, item := range slice {
+		if item == val {
+			return i, true
+		}
+	}
+	return -1, false
+}
+func prepareService(services string) []string {
+	stringSlice := strings.Split(services, ",")
+	return stringSlice
+}
+func getDrives() map[string]int64 {
+	driveMap := make(map[string]int64)
+	out, err := exec.Command("lsblk", "-J", "-b").Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	r, err := unmarshalDrives(out)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for idx, itm := range r.BlockDevices {
+		switch itm.Name {
+		case fmt.Sprintf("loop%d", idx):
+		default:
+			if len(itm.Children) == 0 {
+				size, err := itm.Size.Int64()
+				if err != nil {
+					log.Println(err)
+				}
+				driveMap[itm.Name] = size / 1024 / 1024 / 1024
+			}
+		}
+	}
+	return driveMap
+}
+func unmarshalDrives(data []byte) (Drives, error) {
+	var r Drives
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+func getVolumeInfo() map[string]int64 {
 	driveMap := make(map[string]int64)
 	ses, err := session.NewSession(&aws.Config{
 		Region: aws.String("us-east-1")},
@@ -68,42 +129,6 @@ func getVolumeInfo2() map[string]int64 {
 			log.Println(err)
 		}
 		driveMap[split[0]] = tmpSize
-	}
-	return driveMap
-}
-
-func unmarshalSuffix(data []byte) (Suffixes, error) {
-	var r Suffixes
-	err := json.Unmarshal(data, &r)
-	return r, err
-}
-func unmarshalDrives(data []byte) (Drives, error) {
-	var r Drives
-	err := json.Unmarshal(data, &r)
-	return r, err
-}
-func getDrives() map[string]int64 {
-	driveMap := make(map[string]int64)
-	out, err := exec.Command("lsblk", "-J", "-b").Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-	r, err := unmarshalDrives(out)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for idx, itm := range r.BlockDevices {
-		switch itm.Name {
-		case fmt.Sprintf("loop%d", idx):
-		default:
-			if len(itm.Children) == 0 {
-				size, err := itm.Size.Int64()
-				if err != nil {
-					log.Println(err)
-				}
-				driveMap[itm.Name] = size / 1024 / 1024 / 1024
-			}
-		}
 	}
 	return driveMap
 }
@@ -164,53 +189,6 @@ func serviceStatus(command string, services []string) {
 		}
 	}
 }
-func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
-	var resultSize int64
-	for _, val := range volumes {
-		resultSize = resultSize + val
-	}
-	for drv, size := range drives {
-		if size == resultSize {
-			pvCreate(drv)
-			pvGroupCreate(drv)
-		}
-	}
-	for mPoint, size := range volumes {
-		fmt.Printf("mPoint: %s\n", mPoint)
-		tempPointDirName := fmt.Sprintf("/temp%s", strings.Split(mPoint, "/")[len(strings.Split(mPoint, "/"))-1])
-		fmt.Printf("tempPointDirName: %s\n", tempPointDirName)
-		point := lvcCreate(mPoint, size-1)
-		createFS(point)
-		createTempDir(tempPointDirName)
-		fullLabel := fmt.Sprintf("/dev/mapper/group1-%s", point)
-		oldDir := fmt.Sprintf("%s.old", mPoint)
-		mountDrive(fullLabel, tempPointDirName)
-		copyData(mPoint, tempPointDirName)
-		moveData(mPoint, oldDir)
-		unmountDrive(fullLabel)
-		moveData(tempPointDirName, mPoint)
-		mountDrive(fullLabel, mPoint)
-		removeOldDir(oldDir)
-		fstabConfig(fullLabel, mPoint, "xfs")
-	}
-}
-
-////////////////////////////////////////////////////////////////////////
-func pvCreate(label string) {
-	label = fmt.Sprintf("/dev/%s", label)
-	_, err := exec.Command("pvcreate", label).Output()
-	if err != nil {
-		log.Fatal(err)
-
-	}
-}
-func pvGroupCreate(label string) {
-	label = fmt.Sprintf("/dev/%s", label)
-	_, err := exec.Command("vgcreate", "group1", label).Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 func lvcCreate(mPoint string, size int64) string {
 	points := strings.Split(mPoint, "/")
 	point := fmt.Sprintf("mountpoint_%s", points[len(points)-1])
@@ -228,47 +206,6 @@ func createFS(mPoint string) {
 		log.Fatal(err)
 	}
 }
-
-////////////////////////////////////////////////////////////////////////
-func volumeProcessing(label string, dir string, filesystem string) {
-	tempDir := fmt.Sprintf("/temp%s", label)
-	fullLabel := createDrive(label, filesystem)
-	old := fmt.Sprintf("%s.old", dir)
-	createTempDir(tempDir)
-	mountDrive(fullLabel, tempDir)
-	copyData(dir, tempDir)
-	moveData(dir, old)
-	unmountDrive(fullLabel)
-	moveData(tempDir, dir)
-	mountDrive(fullLabel, dir)
-	removeOldDir(old)
-	fstabConfig(fullLabel, dir, filesystem)
-
-}
-func createDrive(label string, filesystem string) string {
-	labelPath := fmt.Sprintf("/dev/%s", label)
-	formatCommand := fmt.Sprintf("mkfs.%s", filesystem)
-	if _, err1 := exec.Command("parted", "-s", labelPath, "mktable", "gpt").Output(); err1 != nil {
-		log.Println(err1)
-	}
-	if _, err2 := exec.Command("parted", "-s", labelPath, "mkpart", "primary", "0%", "100%").Output(); err2 != nil {
-		log.Println(err2)
-	}
-	time.Sleep(1 * time.Second)
-	driveSuffix := getSuffix(label)
-	fullPartPath := fmt.Sprintf("/dev/%s", driveSuffix)
-	time.Sleep(3 * time.Second)
-	overrideFlag := func(fl string) string {
-		if fl == "xfs" {
-			return "-f"
-		}
-		return "-F"
-	}
-	if _, err3 := exec.Command(formatCommand, overrideFlag(filesystem), fullPartPath).Output(); err3 != nil {
-		log.Println(err3)
-	}
-	return fullPartPath
-}
 func createTempDir(tempDir string) {
 	if _, err := os.Stat(tempDir); os.IsNotExist(err) {
 		err := os.MkdirAll(tempDir, 0700)
@@ -283,12 +220,6 @@ func mountDrive(label string, directory string) {
 		log.Println(err)
 	}
 }
-func unmountDrive(label string) {
-	_, err := exec.Command("umount", label).Output()
-	if err != nil {
-		log.Println(err)
-	}
-}
 func copyData(src string, dst string) {
 	if _, err1 := exec.Command("rsync", "-raX", src+"/", dst+"/").Output(); err1 != nil {
 		log.Println(err1)
@@ -297,6 +228,12 @@ func copyData(src string, dst string) {
 func moveData(src string, dst string) {
 	if _, err1 := exec.Command("mv", src, dst).Output(); err1 != nil {
 		log.Println(err1)
+	}
+}
+func unmountDrive(label string) {
+	_, err := exec.Command("umount", label).Output()
+	if err != nil {
+		log.Println(err)
 	}
 }
 func removeOldDir(directory string) {
@@ -323,25 +260,6 @@ func fstabConfig(label string, directory string, fsType string) {
 	}
 
 }
-func getSuffix(label string) string {
-	var childName string
-	fullLabel := fmt.Sprintf("/dev/%s", label)
-	out, err := exec.Command("lsblk", "-J", fullLabel).Output()
-	if err != nil {
-		log.Println(err)
-	}
-	r, err := unmarshalSuffix(out)
-	if err != nil {
-		log.Println(err)
-	}
-	for _, item := range r.Blockdevices {
-		for _, name := range item.Children {
-			childName = name.Name
-
-		}
-	}
-	return childName
-}
 func getUUID(label string) string {
 	var uuid string
 	out, err := exec.Command("blkid", label, "--output", "export").Output()
@@ -357,41 +275,47 @@ func getUUID(label string) string {
 	}
 	return uuid
 }
-func findInSlice(slice []string, val string) (int, bool) {
-	for i, item := range slice {
-		if item == val {
-			return i, true
+func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, FileSystemType string) {
+	var resultSize int64
+	for _, val := range volumes {
+		resultSize = resultSize + val
+	}
+	for drv, size := range drives {
+		if size == resultSize {
+			pvCreate(drv)
+			pvGroupCreate(drv)
 		}
 	}
-	return -1, false
-}
-func getFs(fs string) string {
-	fileSystems := []string{"xfs", "ext3", "ext4"}
-	if _, found := findInSlice(fileSystems, fs); !found {
-		log.Println("Filesystem is not correct")
-		log.Println("Correct is:")
-		for _, item := range fileSystems {
-			log.Printf("> %s\n", item)
-		}
-		os.Exit(1)
+	for mPoint, size := range volumes {
+
+		tempPointDirName := fmt.Sprintf("/temp%s", strings.Split(mPoint, "/")[len(strings.Split(mPoint, "/"))-1])
+
+		point := lvcCreate(mPoint, size-1)
+		createFS(point)
+		createTempDir(tempPointDirName)
+		fullLabel := fmt.Sprintf("/dev/mapper/group1-%s", point)
+		oldDir := fmt.Sprintf("%s.old", mPoint)
+		mountDrive(fullLabel, tempPointDirName)
+		copyData(mPoint, tempPointDirName)
+		moveData(mPoint, oldDir)
+		unmountDrive(fullLabel)
+		moveData(tempPointDirName, mPoint)
+		mountDrive(fullLabel, mPoint)
+		removeOldDir(oldDir)
+		fstabConfig(fullLabel, mPoint, FileSystemType)
 	}
-	return fs
-}
-func prepareService(services string) []string {
-	stringSlice := strings.Split(services, ",")
-	return stringSlice
 }
 func main() {
-	//fsPtr := flag.String("f", "xfs", "File system type")
-	//svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
-	//flag.Parse()
-	//state := State{start: "start", stop: "stop"}
-	//FileSystemType := getFs(*fsPtr)
-	//services := prepareService(*svcPtr)
+	fsPtr := flag.String("f", "xfs", "File system type")
+	svcPtr := flag.String("s", "", "List of services for stop/start, enter inside quotes thru commas: \"ServiceName1,ServiceName2\"")
+	flag.Parse()
+	state := State{start: "start", stop: "stop"}
+	FileSystemType := getFs(*fsPtr)
+	services := prepareService(*svcPtr)
 	driveMap := getDrives()
-	volInfo := getVolumeInfo2()
+	volInfo := getVolumeInfo()
 	dirIsExist(volInfo)
-	//serviceStatus(state.stop, services)
-	compareVolumeAndDrives(driveMap, volInfo)
-	//serviceStatus(state.start, services)
+	serviceStatus(state.stop, services)
+	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
+	serviceStatus(state.start, services)
 }
