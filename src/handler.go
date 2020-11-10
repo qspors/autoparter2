@@ -198,7 +198,7 @@ func pvGroupCreate(label string) {
 }
 func lvcCreate(mPoint string, size int64) {
 	points := strings.Split(mPoint, "/")
-	point := points[len(points)-1]
+	point := fmt.Sprintf("mountpoint_%s", points[len(points)-1])
 	fmt.Printf("Point Name: %s, size: %d\n", point, size)
 	//_, err := exec.Command("lvcreate ", "-n").Output()
 	//if err != nil {
