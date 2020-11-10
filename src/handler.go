@@ -67,9 +67,11 @@ func getVolumeInfo2() map[string]int64 {
 	for scanner.Scan() {
 		tmp := scanner.Text()
 		split := strings.Split(tmp, "=")
-		if tmpSize, err := strconv.ParseInt(split[1], 10, 64); err != nil {
-			driveMap[split[0]] = tmpSize
+		tmpSize, err := strconv.ParseInt(split[1], 10, 64)
+		if err != nil {
+			log.Println(err)
 		}
+		driveMap[split[0]] = tmpSize
 	}
 	return driveMap
 }
