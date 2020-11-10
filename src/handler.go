@@ -190,7 +190,7 @@ func pvGroupCreate(label string) {
 	label = fmt.Sprintf("/dev/%s", label)
 	out, err := exec.Command("vgcreate", "group1", label).Output()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("ERROR IS: %s", err)
 	}
 	fmt.Println(string(out))
 }
