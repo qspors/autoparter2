@@ -49,14 +49,14 @@ func getVolumeInfo2() map[string]int64 {
 	}
 	svc := ssm.New(ses)
 	parameter := "/dev/snakesapp/driveinfo"
-	input := &ssm.GetParametersByPathInput{
-		Path: aws.String(parameter),
+	input := &ssm.GetParameterInput{
+		Name: aws.String(parameter),
 	}
-	response, err := svc.GetParametersByPath(input)
+	response, err := svc.GetParameter(input)
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(response.Parameters)
+	log.Println(response.Parameter)
 	return driveMap
 }
 
