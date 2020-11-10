@@ -183,7 +183,15 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		createFS(point)
 		createTempDir(tempPointDirName)
 		fullLabel := fmt.Sprintf("/dev/mapper/group1-%s", point)
+		oldDir := fmt.Sprintf("%s.old", mPoint)
 		mountDrive(fullLabel, tempPointDirName)
+		copyData(mPoint, tempPointDirName)
+		moveData(mPoint, oldDir)
+		unmountDrive(fullLabel)
+		moveData(tempPointDirName, mPoint)
+		mountDrive(fullLabel, mPoint)
+		removeOldDir(oldDir)
+		fstabConfig(fullLabel, mPoint, "xfs")
 	}
 }
 
