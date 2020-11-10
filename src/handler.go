@@ -56,7 +56,7 @@ func getVolumeInfo2() map[string]int64 {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(response)
+	log.Println(response.Parameters)
 	return driveMap
 }
 
