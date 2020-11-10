@@ -167,8 +167,11 @@ func serviceStatus(command string, services []string) {
 }
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
 	log.Println("#################### ! ! ! >  H E L L O  < ! ! ! ####################")
-	fmt.Println(drives)
-	fmt.Println(volumes)
+	var resultSize int64
+	for _, val := range volumes {
+		resultSize = resultSize + val
+	}
+	fmt.Println(resultSize)
 }
 func volumeProcessing(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
