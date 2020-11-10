@@ -75,6 +75,35 @@ func getVolumeInfo2() map[string]int64 {
 	}
 	return driveMap
 }
+func getVolumeInfo3() map[string]int64 {
+	driveMap := make(map[string]int64)
+	ses, err := session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1")},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	svc := ssm.New(ses)
+	parameter := "/dev/snakesapp/driveinfo"
+	input := &ssm.GetParameterInput{
+		Name: aws.String(parameter),
+	}
+	response, err := svc.GetParameter(input)
+	if err != nil {
+		log.Println(err)
+	}
+	notEncodedParam := *response.Parameter.Value
+	decoded, err := base64.StdEncoding.DecodeString(notEncodedParam)
+	if err != nil {
+		log.Println(err)
+	}
+	scanner := bufio.NewScanner(strings.NewReader(string(decoded)))
+	scanner.Split(bufio.ScanLines)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
+	return driveMap
+}
 
 ////////////////////////
 func unmarshalSuffix(data []byte) (Suffixes, error) {
@@ -396,6 +425,6 @@ func main() {
 	//serviceStatus(state.stop, services)
 	//compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
 	//serviceStatus(state.start, services)
-	asd := getVolumeInfo2()
-	fmt.Println(asd)
+	getVolumeInfo3()
+
 }
