@@ -166,17 +166,27 @@ func serviceStatus(command string, services []string) {
 	}
 }
 func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64, filesystem string) {
-	log.Println("#################### ! ! ! >  H E L L O  < ! ! ! ####################")
 	var resultSize int64
 	for _, val := range volumes {
 		resultSize = resultSize + val
 	}
 	for drv, size := range drives {
 		if size == resultSize {
-			fmt.Println(drv)
+			pvCreate(drv)
 		}
 	}
 }
+
+////////////////////////////////////////////////////////////////////////
+func pvCreate(label string) {
+	out, err := exec.Command("pvcreate", label).Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(out))
+}
+
+////////////////////////////////////////////////////////////////////////
 func volumeProcessing(label string, dir string, filesystem string) {
 	tempDir := fmt.Sprintf("/temp%s", label)
 	fullLabel := createDrive(label, filesystem)
