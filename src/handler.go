@@ -176,7 +176,8 @@ func compareVolumeAndDrives(drives map[string]int64, volumes map[string]int64) {
 		}
 	}
 	for mPoint, size := range volumes {
-		lvcCreate(mPoint, size-1)
+		mPoint := lvcCreate(mPoint, size-1)
+		createFS(mPoint)
 	}
 }
 
@@ -196,13 +197,21 @@ func pvGroupCreate(label string) {
 		log.Fatal(err)
 	}
 }
-func lvcCreate(mPoint string, size int64) {
+func lvcCreate(mPoint string, size int64) string {
 	points := strings.Split(mPoint, "/")
 	point := fmt.Sprintf("mountpoint_%s", points[len(points)-1])
 	newSize := fmt.Sprintf("%sG", strconv.FormatInt(size, 10))
 	fmt.Println(point)
 	fmt.Println(newSize)
 	_, err := exec.Command("lvcreate", "-n", point, "-L", newSize, "group1").Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return point
+}
+func createFS(mPoint string) {
+	fullPoint := fmt.Sprintf("/dev/group1/%s", mPoint)
+	_, err := exec.Command("mkfs.xfs", fullPoint).Output()
 	if err != nil {
 		log.Fatal(err)
 	}
