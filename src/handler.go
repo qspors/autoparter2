@@ -126,7 +126,7 @@ import (
 //	}
 //	return driveMap
 //}
-func getParameter() string {
+func getParameter() {
 
 	ses, err := session.NewSession(&aws.Config{
 		Region: aws.String("us-east-1")},
@@ -147,7 +147,9 @@ func getParameter() string {
 		fmt.Println(err)
 	}
 
-	return result.String()
+	for _, key := range result.Tags {
+		fmt.Println(key)
+	}
 }
 func getInstanceId() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
@@ -352,6 +354,6 @@ func getInstanceId() string {
 //}
 
 func main() {
-	asd := getParameter()
-	fmt.Println(asd)
+	getParameter()
+
 }
