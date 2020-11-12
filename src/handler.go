@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"io/ioutil"
@@ -145,23 +144,10 @@ func getParameter() string {
 	}
 	result, err := svc.DescribeTags(input)
 	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			default:
-				fmt.Println(aerr.Error())
-			}
-		} else {
-			// Print the error, cast err to awserr.Error to get the Code and
-			// Message from an error.
-			fmt.Println(err.Error())
-		}
-
-		rst := result.String()
-
-		return rst
+		fmt.Println(err)
 	}
 
-	return "/dev/snakesapp/driveinfo"
+	return result.String()
 }
 func getInstanceId() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
