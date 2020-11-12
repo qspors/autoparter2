@@ -365,6 +365,6 @@ func getInstanceId() string {
 func main() {
 	tags := getTags()
 	APP := tags["APP"]
-	STAGE := tags["STAGE"]
+	STAGE := tags["Stage"]
 	fmt.Println(APP, STAGE)
 }
