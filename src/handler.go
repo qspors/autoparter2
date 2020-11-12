@@ -127,7 +127,7 @@ import (
 //	return driveMap
 //}
 func getParameter() {
-	instanceValues := map[string]string
+	instanceValues := map[string]string{}
 	ses, err := session.NewSession(&aws.Config{
 		Region: aws.String("us-east-1")},
 	)
