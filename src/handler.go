@@ -348,6 +348,7 @@ func getInstanceId() string {
 //	compareVolumeAndDrives(driveMap, volInfo, FileSystemType)
 //	serviceStatus(state.start, services)
 //}
+
 func main() {
 	getParameter()
 }
