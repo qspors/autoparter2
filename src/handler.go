@@ -366,5 +366,6 @@ func getInstanceId() string {
 //}
 
 func main() {
-	getParameter()
+	asd := getParameter()
+	fmt.Println(asd)
 }
