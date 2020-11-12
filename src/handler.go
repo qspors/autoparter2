@@ -93,6 +93,8 @@ import (
 //	return r, err
 //}
 //func getVolumeInfo() map[string]int64 {
+//	APP := getTags()["APP"]
+//	parameter := fmt.Sprintf("/%s/%s/driveinfo",get)
 //	driveMap := make(map[string]int64)
 //	ses, err := session.NewSession(&aws.Config{
 //		Region: aws.String("us-east-1")},
@@ -101,7 +103,7 @@ import (
 //		log.Fatal(err)
 //	}
 //	svc := ssm.New(ses)
-//	parameter := getParameter()
+//
 //	input := &ssm.GetParameterInput{
 //		Name: aws.String(parameter),
 //	}
@@ -126,8 +128,9 @@ import (
 //	}
 //	return driveMap
 //}
-func getParameter() {
-	instanceValues := map[string]string{}
+
+func getTags() map[string]string {
+	instanceTags := map[string]string{}
 	ses, err := session.NewSession(&aws.Config{
 		Region: aws.String("us-east-1")},
 	)
@@ -149,13 +152,13 @@ func getParameter() {
 
 	for _, key := range result.Tags {
 		if *key.Key == "APP" {
-			instanceValues["APP"] = *key.Value
+			instanceTags["APP"] = *key.Value
 		}
 		if *key.Key == "Stage" {
-			instanceValues["Stage"] = *key.Value
+			instanceTags["Stage"] = *key.Value
 		}
 	}
-	fmt.Println(instanceValues)
+	return instanceTags
 }
 func getInstanceId() string {
 	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id")
@@ -360,6 +363,8 @@ func getInstanceId() string {
 //}
 
 func main() {
-	getParameter()
-
+	tags := getTags()
+	APP := tags["APP"]
+	STAGE := tags["STAGE"]
+	fmt.Println(APP, STAGE)
 }
