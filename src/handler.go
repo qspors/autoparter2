@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"io/ioutil"
@@ -136,14 +137,29 @@ func getParameter() string {
 	}
 	svc := ec2.New(ses)
 
-	input := &ec2.DescribeInstancesInput{
-		InstanceIds: []*string{aws.String(getInstanceId())},
+	input := &ec2.DescribeTagsInput{
+		Filters: []*ec2.Filter{{
+			Name:   aws.String("resource-id"),
+			Values: []*string{aws.String(getInstanceId())},
+		}},
 	}
-	result, err := svc.DescribeInstances(input)
+	result, err := svc.DescribeTags(input)
 	if err != nil {
-		log.Fatal(err)
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			default:
+				fmt.Println(aerr.Error())
+			}
+		} else {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			fmt.Println(err.Error())
+		}
+
+		rst := result.String()
+
+		return rst
 	}
-	fmt.Println(result.Reservations)
 
 	return "/dev/snakesapp/driveinfo"
 }
